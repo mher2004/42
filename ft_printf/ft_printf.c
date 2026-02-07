@@ -6,7 +6,7 @@
 /*   By: mher <mher@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/05 16:45:14 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/07 00:12:27 by mher             ###   ########.fr       */
+/*   Updated: 2026/02/08 00:02:16 by mher             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,6 +65,8 @@ int	ft_printf(const char *text, ...)
 	int		count;
 	va_list	args;
 
+	if (!text)
+		return (-1);
 	va_start(args, text);
 	i = -1;
 	count = 0;
