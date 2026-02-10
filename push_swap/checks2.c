@@ -6,11 +6,11 @@
 /*   By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 20:01:59 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/10 21:12:06 by mmkrtchy         ###   ########.fr       */
+/*   Updated: 2026/02/10 21:35:51 by mmkrtchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "push_swap.h"
 
 int check_duplicates(char **container)
 {
@@ -41,7 +41,7 @@ int check_no_num(char **container)
     while (container[i])
     {
         j = 1;
-        if (!ft_isdigit(container[i][0]) && (container[i][0] != '+' || container[i][0] != '-'))
+        if (!ft_isdigit(container[i][0]) && container[i][0] != '+' && container[i][0] != '-')
                 return (1);
         while (container[i][j])
             if (!ft_isdigit(container[i][j++]))

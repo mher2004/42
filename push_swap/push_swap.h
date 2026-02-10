@@ -1,25 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   main.c                                             :+:      :+:    :+:   */
+/*   push_swap.h                                        :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/09 20:21:42 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/10 21:39:32 by mmkrtchy         ###   ########.fr       */
+/*   Created: 2026/02/10 21:16:06 by mmkrtchy          #+#    #+#             */
+/*   Updated: 2026/02/10 21:23:38 by mmkrtchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "push_swap.h"
-#include <stdio.h>
+#ifndef PUSH_SWAP_H
+# define PUSH_SWAP_H
 
-int main(int argc, char ** argv)
-{
-    int mode;
+#include "libft/libft.h"
 
-    printf("%s\n", argv[1] );
-    if (error_checker(argv, argc))
-        return (write(1, "Error\n", 6), 0);
-    mode = mode_check(argv[1]);
-    //run_sort(argv, mode);
-}
+int check_duplicates(char **container);
+int check_no_num(char **container);
+int check_long_num(char **container);
+int mode_check(char *mode);
+void free_container(char **container);
+int filler(char **dest, char **src);
+int check_nums(char **argv, int start, int end);
+int error_checker(char ** argv, int argc);
+
+#endif

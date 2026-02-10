@@ -6,7 +6,7 @@
 /*   By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/01/29 17:34:22 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/10 16:28:10 by mmkrtchy         ###   ########.fr       */
+/*   Updated: 2026/02/10 21:25:09 by mmkrtchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,9 @@ char	*ft_strdup(const char *s1);
 int		ft_atoi(const char *str);
 void	*ft_calloc(size_t count, size_t size);
 int	ft_strcmp(const char *s1, const char *s2);
+int	count_words(char const *s, char c);
+char	*word(char const *text, char c, int *i);
+void	f(char **text, int j);
 
 char	*ft_substr(char const *s, unsigned int start, size_t len);
 char	*ft_strjoin(char const *s1, char const *s2);
