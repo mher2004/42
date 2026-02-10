@@ -6,11 +6,11 @@
 /*   By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 16:24:03 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/10 20:50:26 by mmkrtchy         ###   ########.fr       */
+/*   Updated: 2026/02/10 21:33:44 by mmkrtchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "libft.h"
+#include "push_swap.h"
 
 int mode_check(char *mode)
 {
@@ -50,7 +50,7 @@ int filler(char **dest, char **src)
     while (dest[i])
         i++;
     while (src[j])
-        dest[i++] = src[i++];
+        dest[i++] = src[j++];
     dest[i] = NULL;
     return (0);
 }
@@ -82,11 +82,18 @@ int error_checker(char ** argv, int argc)
 {
     if (argc <= 1)
         return (1);
-    if (mode_check(argv[1]))
+    if (argc > 3)
     {
-        if (mode_check(argv[2]))
-            return (check_nums(argv, 3, argc));
-        return (check_nums(argv, 2, argc));
+        if (mode_check(argv[1]) == mode_check(argv[2]) && mode_check(argv[1]) != 0)
+            return (1);
+        if (mode_check(argv[1]))
+        {
+            if (mode_check(argv[2]))
+                return (check_nums(argv, 3, argc));
+            return (check_nums(argv, 2, argc));
+        }
     }
+    else if (argc == 3 && mode_check(argv[1]))
+        return (check_nums(argv, 2, argc));
     return (check_nums(argv, 1, argc));
 }
