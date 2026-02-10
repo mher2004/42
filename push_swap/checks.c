@@ -6,7 +6,7 @@
 /*   By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 16:24:03 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/10 17:56:53 by mmkrtchy         ###   ########.fr       */
+/*   Updated: 2026/02/10 20:50:26 by mmkrtchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,23 +28,56 @@ int mode_check(char *mode)
         return (0);
 }
 
-int check_duplicates(char **argv, int start, int argc)
+void free_container(char **container)
 {
-    int pivot;
+    int i;
 
-    while (start < argc)
-    {
-        pivot = start + 1;
-        while (pivot < argc)
-        {
-            if (argv[start] == argv[pivot])
-                return (1);
-            pivot++;
-        }
-        if (not_number_checker(argv[start]) || not_int_checker(argv[start]))
-        start++;
-    }
+    i = 0;
+    while(container[i])
+        free(container[i++]);
+    free(container);
 }
+
+int filler(char **dest, char **src)
+{
+    int i;
+    int j;
+
+    i = 0;
+    j = 0;
+    if (!src)
+        return (free_container(dest), 1);
+    while (dest[i])
+        i++;
+    while (src[j])
+        dest[i++] = src[i++];
+    dest[i] = NULL;
+    return (0);
+}
+
+int check_nums(char **argv, int start, int end)
+{
+    int obj_count;
+    int i;
+    char **container;
+    
+    obj_count = 0;
+    i = start;
+    while (i < end)
+        obj_count += count_words(argv[i++], ' ');
+    container = (char **)malloc(sizeof(char *) * obj_count + 1);
+    if (!container)
+        return (1);
+    container[0] = NULL;
+    i = 0;
+    while (start < end)
+        if (filler(container, ft_split(argv[start++], ' ')))
+            return (1);
+    if(check_duplicates(container) || check_long_num(container) || check_no_num(container))
+        return (1);
+    return (0);
+}
+
 int error_checker(char ** argv, int argc)
 {
     if (argc <= 1)
