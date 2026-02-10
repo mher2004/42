@@ -6,11 +6,12 @@
 /*   By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 16:24:03 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/10 21:33:44 by mmkrtchy         ###   ########.fr       */
+/*   Updated: 2026/02/10 22:30:50 by mmkrtchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
+#include <stdio.h>
 
 int mode_check(char *mode)
 {
@@ -50,8 +51,13 @@ int filler(char **dest, char **src)
     while (dest[i])
         i++;
     while (src[j])
-        dest[i++] = src[j++];
+    {
+        dest[i++] = ft_strdup(src[j++]);
+        if (!dest[i - 1])
+            return (free_container(dest), free_container(src), 1);
+    }
     dest[i] = NULL;
+    free_container(src);
     return (0);
 }
 
