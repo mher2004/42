@@ -13,15 +13,15 @@
 #ifndef PUSH_SWAP_H
 # define PUSH_SWAP_H
 
-#include "libft/libft.h"
+# include "libft/libft.h"
 
-int check_duplicates(char **container);
-int check_no_num(char **container);
-int check_long_num(char **container);
-int mode_check(char *mode);
-void free_container(char **container);
-int filler(char **dest, char **src);
-int check_nums(char **argv, int start, int end);
-int error_checker(char ** argv, int argc);
+int		check_duplicates(char **container);
+int		check_no_num(char **container);
+int		check_long_num(char **container);
+int		mode_check(char *mode);
+void	free_container(char **container);
+int		filler(char **dest, char **src);
+int		check_nums(char **argv, int start, int end);
+int		error_checker(char **argv, int argc);
 
 #endif
