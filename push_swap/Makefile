@@ -3,19 +3,19 @@
 #                                                         :::      ::::::::    #
 #    Makefile                                           :+:      :+:    :+:    #
 #                                                     +:+ +:+         +:+      #
-#    By: mher <mher@student.42.fr>                  +#+  +:+       +#+         #
+#    By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/02/01 20:00:58 by mmkrtchy          #+#    #+#              #
-#    Updated: 2026/02/11 00:22:20 by mher             ###   ########.fr        #
+#    Updated: 2026/02/12 20:07:23 by mmkrtchy         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 NAME = push_swap
 CC = cc
-CFLAGS = -Wall -Wextra -Werror -I. -I./libft
+CFLAGS = -Wall -Wextra -Werror -g3 -I. -I./libft
 LIBFT = ./libft/libft.a
 
-SRCS =  main.c checks.c checks2.c
+SRCS =  main.c checks.c checks2.c fill_nums.c
 
 
 OBJS = $(SRCS:.c=.o)

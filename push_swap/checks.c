@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mher <mher@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 16:24:03 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/11 00:26:02 by mher             ###   ########.fr       */
+/*   Updated: 2026/02/12 20:29:08 by mmkrtchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,18 +70,23 @@ int	check_nums(char **argv, int start, int end)
 	obj_count = 0;
 	i = start;
 	while (i < end)
+	{
+		if (count_words(argv[i], ' ') == 0)
+			return (1);
 		obj_count += count_words(argv[i++], ' ');
-	container = (char **)malloc(sizeof(char *) * obj_count + 1);
+	}	
+	
+	container = (char **)malloc(sizeof(char *) * (obj_count + 1));
 	if (!container)
 		return (1);
 	container[0] = NULL;
-	i = 0;
 	while (start < end)
 		if (filler(container, ft_split(argv[start++], ' ')))
-			return (1);
+			return (free_container(container), 1);
 	if (check_duplicates(container) || check_long_num(container)
 		|| check_no_num(container))
-		return (1);
+		return (free_container(container), 1);
+	free_container(container);
 	return (0);
 }
 
