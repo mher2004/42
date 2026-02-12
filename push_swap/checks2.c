@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mher <mher@student.42.fr>                  +#+  +:+       +#+        */
+/*   By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 20:01:59 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/11 00:29:14 by mher             ###   ########.fr       */
+/*   Updated: 2026/02/12 18:11:03 by mmkrtchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,7 +65,16 @@ int	check_long_num(char **container)
 		if ((container[i][0] == '+' || container[i][0] == '-')
 			&& ft_strlen(container[i]) > 11)
 			return (1);
-		else if (ft_strlen(container[i]) > 10)
+		else if (ft_strlen(container[i]) > 11)
+			return (1);
+		else if (container[i][0] == '+' && ft_strlen(container[i]) == 11
+			&& ft_strcmp(container[i], "+2147483647") > 0)
+			return (1);
+		else if (container[i][0] == '-' && ft_strlen(container[i]) == 11
+			&& ft_strcmp(container[i], "-2147483647") > 0)
+			return (1);
+		else if (ft_strlen(container[i]) == 10 && ft_strcmp(container[i],
+				"2147483647") > 0)
 			return (1);
 		i++;
 	}
