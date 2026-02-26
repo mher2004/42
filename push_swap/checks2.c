@@ -3,14 +3,34 @@
 /*                                                        :::      ::::::::   */
 /*   checks2.c                                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmkrtchy <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/02/10 20:01:59 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/12 18:11:03 by mmkrtchy         ###   ########.fr       */
+/*   Updated: 2026/02/26 16:03:14 by mmkrtchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "push_swap.h"
+
+int	duplicate_checker(int *number, int size)
+{
+	int	i;
+	int	j;
+
+	i = 0;
+	while (i < size)
+	{
+		j = i + 1;
+		while (j < size)
+		{
+			if (number[i] == number[j])
+				return (1);
+			j++;
+		}
+		i++;
+	}
+	return (0);
+}
 
 int	check_duplicates(char **container)
 {
