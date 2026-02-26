@@ -3,10 +3,10 @@
 /*                                                        :::      ::::::::   */
 /*   checks.c                                           :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
-/*   By: mmkrtchy <mmkrtchy@student.42.fr>          +#+  +:+       +#+        */
+/*   By: mmkrtchy <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/02/10 16:24:03 by mmkrtchy          #+#    #+#             */
-/*   Updated: 2026/02/12 20:29:08 by mmkrtchy         ###   ########.fr       */
+/*   Created: 2026/02/26 16:02:01 by mmkrtchy          #+#    #+#             */
+/*   Updated: 2026/02/26 16:02:06 by mmkrtchy         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,8 +74,7 @@ int	check_nums(char **argv, int start, int end)
 		if (count_words(argv[i], ' ') == 0)
 			return (1);
 		obj_count += count_words(argv[i++], ' ');
-	}	
-	
+	}
 	container = (char **)malloc(sizeof(char *) * (obj_count + 1));
 	if (!container)
 		return (1);
