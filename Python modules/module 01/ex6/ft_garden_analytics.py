@@ -119,20 +119,21 @@ class GardenManager:
     @classmethod
     def create_garden_network(cls):
         print("=== Garden Management System Demo ===\n")
-        Test = cls()
-        Test.garden["Alice"] = []
-        Test.garden["Bob"] = [Plant("Cactus", 92)]
-        Test.add_plant("Alice", Plant("Oak Tree", 100))
-        Test.add_plant("Alice", FloweringPlant("Rose", 25, "red flowers", 1))
-        Test.add_plant("Alice", PrizeFlower("Sunflower",
-                                            50, "yellow flowers", 1, 10))
+        manager = cls()
+        manager.garden["Alice"] = []
+        manager.garden["Bob"] = [Plant("Cactus", 92)]
+        manager.add_plant("Alice", Plant("Oak Tree", 100))
+        manager.add_plant("Alice", FloweringPlant("Rose", 25,
+                                                  "red flowers", 1))
+        manager.add_plant("Alice", PrizeFlower("Sunflower",
+                                               50, "yellow flowers", 1, 10))
         print()
-        Test.help_all_grow("Alice")
+        manager.help_all_grow("Alice")
         print()
-        Test.print_report("Alice")
+        manager.print_report("Alice")
         print()
-        print("Height validation test: ", Test.validate_height(55))
-        Test.score()
+        print("Height validation test: ", manager.validate_height(55))
+        manager.score()
 
 
 testing = GardenManager()
