@@ -1,44 +1,64 @@
 #!/usr/bin/env python3
 class Plant:
     def __init__(self, name, height):
-        self.name = name
-        self.height = height
-        self.growth = 0
+        self.__name = name
+        self.__height = height
+        self.__growth = 0
 
     def grow(self):
-        self.height += 1
-        self.growth += 1
-        print(f"{self.name} grew 1cm")
+        self.__height += 1
+        self.__growth += 1
+        print(f"{self.__name} grew 1cm")
+
+    def get_name(self):
+        return self.__name
+
+    def get_height(self):
+        return self.__height
+
+    def get_growth(self):
+        return self.__growth
 
     def __repr__(self):
-        return (f"- {self.name}: {self.height}cm")
+        return (f"- {self.__name}: {self.__height}cm")
 
 
 class FloweringPlant(Plant):
     def __init__(self, name, height, color, bloom):
         super().__init__(name, height)
-        self.color = color
-        self.bloom = bloom
+        self.__color = color
+        self.__bloom = bloom
+
+    def get_color(self):
+        return self.__color
+
+    def get_bloom(self):
+        return self.__bloom
 
     def __repr__(self):
-        if self.bloom:
-            return (f"- {self.name}: {self.height}cm, {self.color} (blooming)")
+        if self.__bloom:
+            return (f"- {self.get_name()}: {self.get_height()}cm,\
+ {self.get_color()} (blooming)")
         else:
-            return (f"- {self.name}: {self.height}cm, {self.color}")
+            return (f"- {self.get_name()}: {self.get_height()}cm,\
+ {self.get_color()}")
 
 
 class PrizeFlower(FloweringPlant):
     def __init__(self, name, height, color, bloom, points):
         super().__init__(name, height, color, bloom)
-        self.points = points
+        self.__points = points
+
+    def get_points(self):
+        return self.__points
 
     def __repr__(self):
-        if self.bloom:
-            return (f"- {self.name}: {self.height}cm, {self.color}\
- (blooming), Prize points: {self.points}")
+        if self.get_bloom():
+            return (f"- {self.get_name()}: {self.get_height()}cm,\
+ {self.get_color()} (blooming), Prize points: {self.get_points()}")
         else:
-            return (f"- {self.name}: {self.height}cm, {self.color}\
-, Prize points: {self.points}")
+            return (f"- {self.get_name()}: {self.get_height()}cm,\
+{self.get_color()}, Prize points: {self.get_points()}")
 
 
 class GardenManager:
@@ -67,13 +87,13 @@ class GardenManager:
             growth = 0
             count = 0
             for plant in self.garden:
-                growth += plant.growth
+                growth += plant.get_growth()
                 count += 1
             print(f"Plants added: {count}, Total growth: {growth}cm")
 
     def add_plant(self, garden_name, plant):
         self.garden[garden_name].append(plant)
-        print(f"Added {plant.name} to {garden_name}'s garden")
+        print(f"Added {plant.get_name()} to {garden_name}'s garden")
 
     def help_all_grow(self, garden_name):
         print(f"{garden_name} is helping all plants grow...")
@@ -97,14 +117,14 @@ class GardenManager:
             total_score = 0
             for plant in self.garden[garden]:
                 if isinstance(plant, PrizeFlower):
-                    total_score += plant.height
-                    total_score += plant.bloom * 15
-                    total_score += plant.points
+                    total_score += plant.get_height()
+                    total_score += plant.get_bloom() * 15
+                    total_score += plant.get_points()
                 elif isinstance(plant, FloweringPlant):
-                    total_score += plant.height
-                    total_score += plant.bloom * 15
+                    total_score += plant.get_height()
+                    total_score += plant.get_bloom() * 15
                 else:
-                    total_score += plant.height
+                    total_score += plant.get_height()
             i += 1
             print(f"{garden}: {total_score}", end="")
             if (i != len(self.garden)):
