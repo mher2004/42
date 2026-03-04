@@ -4,10 +4,12 @@ class Plant:
         self.name = name
         self.height = height
         self.age = age
+
     def see(self):
         print(f"{self.name}: {self.height}cm, {self.age} days old")
 
-if __name__=="__main__":
+
+if __name__ == "__main__":
     print("=== Garden Plant Registry ===")
     aloe = Plant("Aloe", 21, 26)
     cactus = Plant("Cactus", 52, 200)
