@@ -134,7 +134,12 @@ class GardenManager:
         print()
         print("Height validation test: ", manager.validate_height(55))
         manager.score()
+        return manager
 
 
-testing = GardenManager()
-GardenManager.create_garden_network()
+if __name__ == "__main__":
+    testing = GardenManager().create_garden_network()
+    # GardenManager.create_garden_network()
+    # print()
+    # testing.help_all_grow("Alice")
+    # testing.score()
