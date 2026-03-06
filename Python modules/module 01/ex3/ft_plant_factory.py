@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 class Plant:
-    def __init__(self, name, height, age):
+    def __init__(self, name: str, height: int, age: int) -> None:
         self.name = name
         self.start_height = height
         self.starting_age = age
@@ -9,17 +9,17 @@ class Plant:
         print(f"Created: {self.name}: {self.actual_height}cm,\
 {self.actual_age} days old")
 
-    def get_info(self):
+    def get_info(self) -> None:
         print(f"{self.name}: {self.actual_height}cm,\
 {self.actual_age} days old")
 
-    def grow(self, num):
+    def grow(self, num: int) -> None:
         self.actual_height += num
 
-    def age(self, num):
+    def age(self, num: int) -> None:
         self.actual_age += num
 
-    def get_week_change(self):
+    def get_week_change(self) -> None:
         print(f"Growth of {self.name} this week: +\
 {self.actual_height-self.start_height}cm")
 
