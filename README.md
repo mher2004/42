@@ -38,4 +38,4 @@ Each project lives in its own folder. Most C projects come with a `Makefile` —
 
 ---
 
-*Made with late nights and too much coffee ☕*
+*Made with late nights and too much coffee ☕ (mmkrtchy)*
