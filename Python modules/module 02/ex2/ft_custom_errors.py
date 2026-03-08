@@ -28,7 +28,7 @@ class WaterError(GardenError):
         print(self.message)
 
 
-def testing_errors():
+def testing_errors() -> None:
     print("=== Custom Garden Errors Demo ===\n")
     try:
         print("Testing PlantError...")
