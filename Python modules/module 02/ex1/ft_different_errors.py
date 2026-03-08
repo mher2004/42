@@ -29,15 +29,17 @@ def test_error_types(value: int = 1,
         a = 1
     try:
         print("Testing FileNotFoundError...")
-        garden_operations(file="Bxdo")
+        file_name = "Bxdo"
+        garden_operations(file=file_name)
     except FileNotFoundError:
-        print(f"Caught FileNotFoundError: No such file {file}\n")
+        print(f"Caught FileNotFoundError: No such file {file_name}\n")
         a = 1
     try:
         print("Testing KeyError...")
-        garden_operations(key='Bxdo')
+        key_name = "Bxdo"
+        garden_operations(key=key_name)
     except KeyError:
-        print(f"Caught KeyError: {key}\n")
+        print(f"Caught KeyError: {key_name}\n")
         a = 1
     if a:
         print("Caught an error, but program continues!\n")
@@ -47,4 +49,5 @@ def test_error_types(value: int = 1,
 
 
 if __name__ == "__main__":
+    print("=== Garden Error Types Demo ===\n")
     test_error_types()
