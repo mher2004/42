@@ -9,7 +9,7 @@ except FileNotFoundError:
     print("STATUS: Crisis handled, system stable\n")
 try:
     with open("classified_vault.txt", "w") as file:
-        pass
+        raise PermissionError
 except PermissionError:
     print("CRISIS ALERT: Attempting access to 'classified_vault.txt'...")
     print("RESPONSE: Security protocols deny access")
