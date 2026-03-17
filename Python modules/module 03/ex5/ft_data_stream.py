@@ -1,8 +1,9 @@
 import random
 from time import time
+import typing
 
 
-def get_event(num: int):
+def get_event(num: int) -> typing.Generator:
     names = ['Bob', 'Lucy', 'Marty', 'Tyler', 'Grno']
     events = ['killed monster', 'found treasure', 'leveled up']
     number = 0
@@ -12,7 +13,7 @@ def get_event(num: int):
                events[random.randint(0, 2)], random.randint(0, 20))
 
 
-def fibo(num: int):
+def fibo(num: int) -> typing.Generator:
     old = 0
     new = 1
     count = 1
@@ -34,7 +35,7 @@ def isprime(number: int) -> int:
     return 1
 
 
-def prime(num: int):
+def prime(num: int) -> typing.Generator:
     primenum = 2
     count = 0
     while count < num:
