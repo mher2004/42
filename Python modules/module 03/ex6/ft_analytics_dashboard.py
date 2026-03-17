@@ -4,7 +4,7 @@ players = {
     'Grno': [2800, ['speed_demon', 'perfectionist']],
     'Bxdo': [2200, ['treasure_hunter', 'speed_demon']]
     }
-scores = {'high': 3, 'medium': 2, 'low': 1}
+scores = {'high': [], 'medium': [], 'low': []}
 print("=== Game Analytics Dashboard ===\n")
 
 print("=== List Comprehension Examples ===")
@@ -17,7 +17,14 @@ print("Active players: ", active)
 
 print("\n=== Dict Comprehension Examples ===")
 dt = {key: value[0] for key, value in players.items()}
-sc = {key: value for key, value in scores.items()}
+sc = {
+    key: sum(
+        [1 if key == 'high' and player[0] > 2000
+         else (1 if key == 'medium' and 2000 >= player[0] > 1700
+               else (1 if key == 'low' and player[0] <= 1700
+                     else 0
+                     )) for player in players.values(
+                     )]) for key in scores.keys()}
 count = {key: len(value[1]) for key, value in players.items()}
 print("Player scores:", dt)
 print("Score categories:", sc)
