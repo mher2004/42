@@ -11,6 +11,8 @@ try:
         print(file.read())
 except FileNotFoundError:
     print("Error: No files to read")
+except PermissionError:
+    print("Error: No permission to read")
 else:
     print("Vault automatically sealed upon completion")
 

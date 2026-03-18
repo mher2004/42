@@ -7,4 +7,4 @@ try:
         print(file.read())
     print("\nData recovery complete. Storage unit disconnected.")
 except FileNotFoundError:
-    print("ERROR: Storage vault not found. ")
+    print("ERROR: Storage vault not found. Run data generator first.")

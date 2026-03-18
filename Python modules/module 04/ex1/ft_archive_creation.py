@@ -1,5 +1,4 @@
 print("=== CYBER ARCHIVES - PRESERVATION SYSTEM ===\n")
-print("Initializing new storage unit: new_discovery.txt")
 
 try:
     with open("new_discovery.txt", "r") as file:

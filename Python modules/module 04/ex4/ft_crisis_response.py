@@ -1,22 +1,24 @@
 print("=== CYBER ARCHIVES - CRISIS RESPONSE SYSTEM ===\n")
 
-try:
-    with open("lost_archive.txt", "r") as file:
-        pass
-except FileNotFoundError:
-    print("CRISIS ALERT: Attempting access to 'lost_archive.txt'...")
-    print("RESPONSE: Archive not found in storage matrix")
-    print("STATUS: Crisis handled, system stable\n")
-try:
-    with open("classified_vault.txt", "w") as file:
-        raise PermissionError
-except PermissionError:
-    print("CRISIS ALERT: Attempting access to 'classified_vault.txt'...")
-    print("RESPONSE: Security protocols deny access")
-    print("STATUS: Crisis handled, security maintained\n")
-with open("standard_archive.txt", "r") as file:
-    print("ROUTINE ACCESS: Attempting access to 'standard_archive.txt'...")
-    print(f"SUCCESS: Archive recovered - ``{file.read()}''")
-    print("STATUS: Normal operations resumed\n")
+
+def open_file(filename: str) -> None:
+    try:
+        with open(filename, "r") as file:
+            print(f"ROUTINE ACCESS: Attempting access to '{filename}'...")
+            print(f"SUCCESS: Archive recovered - ``{file.read()}''")
+            print("STATUS: Normal operations resumed\n")
+    except FileNotFoundError:
+        print(f"CRISIS ALERT: Attempting access to '{filename}'...")
+        print("RESPONSE: Archive not found in storage matrix")
+        print("STATUS: Crisis handled, system stable\n")
+    except PermissionError:
+        print(f"CRISIS ALERT: Attempting access to '{filename}'...")
+        print("RESPONSE: Security protocols deny access")
+        print("STATUS: Crisis handled, security maintained\n")
+
+
+open_file("lost_archive.txt")
+open_file("classified_vault.txt")
+open_file("standard_archive.txt")
 
 print("All crisis scenarios handled successfully. Archives secure.")
