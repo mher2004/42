@@ -6,9 +6,9 @@ try:
         print("Vault connection established with failsafe protocols")
         print("\nSECURE EXTRACTION:")
         print(file.read())
-    with open("security_protocols.txt", "r") as file:
+    with open("security_protocols.txt", "w") as file:
         print("\nSECURE PRESERVATION:")
-        print(file.read())
+        print(file.write("[CLASSIFIED] New security protocols archived"))
 except FileNotFoundError:
     print("Error: No files to read")
 except PermissionError:

@@ -15,6 +15,9 @@ def open_file(filename: str) -> None:
         print(f"CRISIS ALERT: Attempting access to '{filename}'...")
         print("RESPONSE: Security protocols deny access")
         print("STATUS: Crisis handled, security maintained\n")
+    except Exception:
+        print(f"CRISIS ALERT: Attempting access to '{filename}'...")
+        print("RESPOSE: Some error ocurred")
 
 
 open_file("lost_archive.txt")
