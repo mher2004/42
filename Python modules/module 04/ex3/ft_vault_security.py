@@ -8,7 +8,8 @@ try:
         print(file.read())
     with open("security_protocols.txt", "w") as file:
         print("\nSECURE PRESERVATION:")
-        print(file.write("[CLASSIFIED] New security protocols archived"))
+        print("[CLASSIFIED] New security protocols archived")
+        file.write("[CLASSIFIED] New security protocols archived")
 except FileNotFoundError:
     print("Error: No files to read")
 except PermissionError:
