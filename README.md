@@ -15,6 +15,8 @@ Hey! This is my personal repository gathering all the projects I've completed at
 | `Python Module 00` | Python | Python basics |
 | `Python Module 01` | Python | OOP & more |
 | `Python Module 02` | Python | Continuing the Python dive |
+| `Python Module 03` | Python | Exception handling |
+| `Python Module 04` | Python | Working with file descriptors |
 
 ---
 
