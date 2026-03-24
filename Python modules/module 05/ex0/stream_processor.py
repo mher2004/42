@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-from typing import Any
+from typing import Any, List
 
 
 class DataProcessor(ABC):
@@ -16,7 +16,7 @@ class DataProcessor(ABC):
 
 
 class NumericProcessor(DataProcessor):
-    def process(self, data: list(int)) -> str:
+    def process(self, data: List[int]) -> str:
         try:
             a = [int(i) for i in data]
         except ValueError:
@@ -25,7 +25,7 @@ class NumericProcessor(DataProcessor):
             return self.format_output(f"Processed {len(a)} numeric\
  values, sum={sum(a)}, avg={sum(a)/len(a)}")
 
-    def validate(self, data: list(int)) -> bool:
+    def validate(self, data: List[int]) -> bool:
         try:
             data = [int(i) for i in data]
         except ValueError:
@@ -45,8 +45,8 @@ class TextProcessor(DataProcessor):
         except ValueError:
             return "Error: not str type value"
         else:
-            return self.format_output(f"Processed text: {len(a)} characters,\
- {len(a.split(" "))} words")
+            return self.format_output(f"Processed text: {len(a)}\
+ characters,{len(a.split(' '))} words")
 
     def validate(self, data: str) -> bool:
         try:
@@ -85,7 +85,7 @@ class LogProcessor(DataProcessor):
                 txt += "[ALERT]"
             else:
                 txt += "[INFO] "
-            txt += f"{data.split(":")[0]} level detected:{data.split(":")[1]}"
+            txt += f"{data.split(':')[0]} level detected:{data.split(':')[1]}"
             return txt
 
 
