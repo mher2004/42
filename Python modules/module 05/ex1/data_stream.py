@@ -13,7 +13,7 @@ class DataStream(ABC):
 
     def filter_data(
                     self, data_batch: List[Any],
-                    criteria: Optional[str] = None
+                    criteria: Optional[Any] = None
                     ) -> List[Any]:
         if criteria is not None:
             return [i for i in data_batch if i == criteria]
@@ -28,7 +28,7 @@ class SensorStream(DataStream):
         super().__init__(stream_id)
         print(f"Stream ID: {stream_id}, Type: Environmental Data")
         self.temp_count = 0
-        self.avg = 0
+        self.avg = 0.0
         self.stream_type = "Sensor"
 
     def process_batch(self, data_batch: List[Any]) -> str:
@@ -38,6 +38,7 @@ class SensorStream(DataStream):
                     raise TypeError("Error: Not right data format")
         except TypeError as error:
             print(error)
+            return str(error)
         else:
             for i in data_batch:
                 if i.split(":")[0] == "temp":
@@ -58,6 +59,7 @@ class SensorStream(DataStream):
                     raise TypeError("Error: Not right data format")
         except TypeError as error:
             print(error)
+            return [str(error)]
         else:
             if criteria is not None and (
                     isinstance(criteria, float) or isinstance(criteria, int)):
@@ -73,7 +75,7 @@ class TransactionStream(DataStream):
     def __init__(self, stream_id: str) -> None:
         super().__init__(stream_id)
         print(f"Stream ID: {stream_id}, Type: Financial Data")
-        self.flow = 0
+        self.flow = 0.0
         self.stream_type = "Transaction"
 
     def process_batch(self, data_batch: List[Any]) -> str:
@@ -85,6 +87,7 @@ class TransactionStream(DataStream):
                     raise TypeError("Error: Not right data format")
         except TypeError as error:
             print(error)
+            return str(error)
         else:
             for i in data_batch:
                 if i.split(":")[0] == "buy":
@@ -104,6 +107,7 @@ class TransactionStream(DataStream):
                     raise TypeError("Error: Not right data format")
         except TypeError as error:
             print(error)
+            return [error]
         else:
             if criteria is not None and (
                     criteria == "buy" or criteria == "sell"):
@@ -129,6 +133,7 @@ class EventStream(DataStream):
                     raise TypeError("Error: Not right data format")
         except TypeError as error:
             print(error)
+            return str(error)
         else:
             for i in data_batch:
                 if i == "error":
@@ -146,6 +151,7 @@ class EventStream(DataStream):
                     raise TypeError("Error: Not right data format")
         except TypeError as error:
             print(error)
+            return [error]
         else:
             if criteria is not None:
                 return [i for i in data_batch if i == criteria]
@@ -157,7 +163,7 @@ class EventStream(DataStream):
 
 class StreamProcessor:
     def __init__(self) -> None:
-        self.streams = []
+        self.streams: list[Any] = []
 
     def add_stream(self, stream: DataStream) -> None:
         try:

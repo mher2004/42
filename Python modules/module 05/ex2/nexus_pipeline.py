@@ -44,8 +44,10 @@ class OutputStage:
  logged: {data['count']} actions processed"
                 elif data['format'] == 'stream':
                     return f"Output: Stream summary\
- {len(data['values']) - 1} readings,\
+ {len(data['values'])} readings,\
  avg={sum(data['values'])/len(data['values'])}"
+                else:
+                    raise ValueError("Missing format")
             except KeyError as e:
                 raise ValueError(f"Missing key: {e}")
         else:
@@ -54,7 +56,7 @@ class OutputStage:
 
 class ProcessingPipeline(ABC):
     def __init__(self, pipeline_id: str) -> None:
-        self.stages = []
+        self.stages: list[ProcessingStage] = []
         self.pipeline_id = pipeline_id
 
     def add_stage(self, stage: ProcessingStage) -> None:
@@ -69,7 +71,7 @@ class ProcessingPipeline(ABC):
 
 
 class JSONAdapter(ProcessingPipeline):
-    def __init__(self, pipeline_id: int) -> None:
+    def __init__(self, pipeline_id: str) -> None:
         self.info = "JSON"
         super().__init__(pipeline_id)
 
@@ -85,7 +87,7 @@ class JSONAdapter(ProcessingPipeline):
 
 
 class CSVAdapter(ProcessingPipeline):
-    def __init__(self, pipeline_id: int) -> None:
+    def __init__(self, pipeline_id: str) -> None:
         self.info = "CSV"
         super().__init__(pipeline_id)
 
@@ -101,19 +103,20 @@ class CSVAdapter(ProcessingPipeline):
         data_dict['format'] = 'csv'
         data_dict['class'] = values[0]
         data_dict['mode'] = values[1]
-        data_dict['count'] = len(values) - 2
+        data_dict['count'] = str(len(values) - 2)
         for stage in self.stages:
             data_dict = stage.process(data_dict)
         return data_dict
 
 
 class StreamAdapter(ProcessingPipeline):
-    def __init__(self, pipeline_id: int) -> None:
+    def __init__(self, pipeline_id: str) -> None:
         self.info = "Stream"
         super().__init__(pipeline_id)
 
-    def process(self, data: List[int], printing: bool = False) -> Dict:
-        data_dict = {'format': 'stream'}
+    def process(
+            self, data: List[int], printing: bool = False) -> Dict[str, Any]:
+        data_dict: Dict[str, Any] = {'format': 'stream'}
         if not isinstance(data, list):
             raise ValueError("Error: wrong input (not list)")
         if printing:
@@ -157,7 +160,7 @@ Pipeline capacity: 1000 streams/second\n")
  processing resumed")
                 print()
 
-    def chaining(self, data: Any, pipelines: list) -> None:
+    def chaining(self, data: Any, pipelines: list) -> Dict:
         try:
             for pipeline in pipelines:
                 data = pipeline.process(data)
@@ -191,7 +194,7 @@ if __name__ == "__main__":
         [
             {"sensor": "temp", "value": 23.5, "unit": "C"},
             "user,action,timestamp",
-            [15, 18, 17, 19],
+            [150, 18, 17, 19],
          ],
         True
     )
@@ -212,13 +215,14 @@ if __name__ == "__main__":
     print("Simulating pipeline failure...")
     json.add_stage(out)
     csv.add_stage(out)
-    stream.add_stage(out)
     print()
+    manager.pipelines.remove(json)
+    manager.add_pipeline(json)
     manager.process_data(
         [
-            {"a": "temp", "value": 23.5, "unit": "C"},
             "user,action,timestamp",
             [15, 18, 17, 19],
+            {"a": "temp", "value": 23.5, "unit": "C"},
          ],
         False
     )
