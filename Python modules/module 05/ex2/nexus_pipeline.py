@@ -10,7 +10,7 @@ class ProcessingStage(Protocol):
 
 
 class InputStage:
-    def __init__(self):
+    def __init__(self) -> None:
         self.inform = "Input validation and parsing"
 
     def process(self, data: Any) -> Dict:
@@ -20,7 +20,7 @@ class InputStage:
 
 
 class TransformStage:
-    def __init__(self):
+    def __init__(self) -> None:
         self.inform = "Data transformation and enrichment"
 
     def process(self, data: Any) -> Dict:
@@ -30,7 +30,7 @@ class TransformStage:
 
 
 class OutputStage:
-    def __init__(self):
+    def __init__(self) -> None:
         self.inform = "Output formatting and delivery"
 
     def process(self, data: Any) -> str:
@@ -133,7 +133,7 @@ class StreamAdapter(ProcessingPipeline):
 
 
 class NexusManager:
-    def __init__(self):
+    def __init__(self) -> None:
         print("Initializing Nexus Manager...\n\
 Pipeline capacity: 1000 streams/second\n")
         self.pipelines = []
