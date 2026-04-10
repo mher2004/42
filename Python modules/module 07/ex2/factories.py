@@ -1,5 +1,6 @@
 from abc import ABC, abstractmethod
-from health import Sproutling, Shiftling, Bloomelle, Morphagon
+from .health import Sproutling, Shiftling, Bloomelle, Morphagon
+from .creatures import Flameling, Aquabub, Pyrodon, Torragon
 
 
 class CreatureFactory(ABC):
@@ -26,3 +27,19 @@ class TransformCreatureFactory(CreatureFactory):
 
     def create_evolved(self) -> None:
         self.evolved = Morphagon()
+
+
+class FlameFactory(CreatureFactory):
+    def create_base(self) -> None:
+        self.base = Flameling("Flameling", "Fire")
+
+    def create_evolved(self) -> None:
+        self.evolved = Pyrodon("Pyrodon", "Fire/Bird")
+
+
+class AquaFactory(CreatureFactory):
+    def create_base(self) -> None:
+        self.base = Aquabub("Aquabub", "Water")
+
+    def create_evolved(self) -> None:
+        self.evolved = Torragon("Torragon", "Water")
