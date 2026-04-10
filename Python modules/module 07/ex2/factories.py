@@ -1,9 +1,15 @@
 from abc import ABC, abstractmethod
 from .health import Sproutling, Shiftling, Bloomelle, Morphagon
 from .creatures import Flameling, Aquabub, Pyrodon, Torragon
+from .creatures import Creature
 
 
 class CreatureFactory(ABC):
+    def __init__(self) -> None:
+        self.base: Creature
+        self.evolved: Creature
+        super().__init__()
+
     @abstractmethod
     def create_base(self) -> None:
         pass

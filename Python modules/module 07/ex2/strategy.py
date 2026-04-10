@@ -1,15 +1,17 @@
 from abc import ABC, abstractmethod
 from .creatures import Creature
 from .health import TransformCapability, HealCapability
+from .health import Shiftling, Morphagon, Sproutling, Bloomelle
+from typing import Any, Union
 
 
 class BattleStrategy(ABC):
     @abstractmethod
-    def act(self) -> None:
+    def act(self, creatur: Any) -> None:
         pass
 
     @abstractmethod
-    def is_valid(self) -> bool:
+    def is_valid(self, creature: Any) -> bool:
         pass
 
 
@@ -30,7 +32,7 @@ class NormalStrategy(BattleStrategy):
 
 
 class AggresiveStrategy(BattleStrategy):
-    def act(self, creature: TransformCapability) -> None:
+    def act(self, creature: Union[Shiftling, Morphagon]) -> None:
         if not self.is_valid(creature):
             raise CreatureError(f"Battle error, aborting tournament:\
  Invalid Creature '{creature.name}' for this aggresive strategy")
@@ -39,17 +41,17 @@ class AggresiveStrategy(BattleStrategy):
         print(creature.revert())
         print()
 
-    def is_valid(self, creature: TransformCapability):
+    def is_valid(self, creature: Creature) -> bool:
         return isinstance(creature, TransformCapability)
 
 
 class DefensiveStrategy(BattleStrategy):
-    def act(self, creature: HealCapability) -> None:
+    def act(self, creature: Union[Sproutling, Bloomelle]) -> None:
         if not self.is_valid(creature):
             raise CreatureError(f"Battle error, aborting tournament:\
  Invalid Creature '{creature.name}' for this defensive strategy")
         print(creature.attack())
         print(creature.heal())
 
-    def is_valid(self, creature: HealCapability):
+    def is_valid(self, creature: Creature):
         return isinstance(creature, HealCapability)
