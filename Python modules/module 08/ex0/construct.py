@@ -23,5 +23,7 @@ else:
 Safe to install packages without affecting\n\
 the global system.\n\
 Package installation path:")
-    print(site.getsitepackages())
+    print([
+        name for name in site.getsitepackages() if "/site-packages" in name
+        ])
     print()
