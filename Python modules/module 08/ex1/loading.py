@@ -1,5 +1,4 @@
 from importlib.metadata import version, PackageNotFoundError
-import tomli
 
 print("\nLOADING STATUS: Loading programs...\n")
 
@@ -10,17 +9,26 @@ def check_dep(mode: bool) -> bool:
     print("Checking dependencies:")
     generate = True
     if mode:
-        with open("pyproject.toml", "rb") as file:
-            data = tomli.load(file)
-            for module in data["tool"]["poetry"]["dependencies"]:
-                try:
-                    if module == "python":
-                        continue
-                    print(f"[OK] {module} {version(module)}")
-                except PackageNotFoundError:
-                    print(f"[KO] {module} not installed(pip install {module})")
-                    generate = False
-        print()
+        try:
+            import tomli
+            with open("pyproject.toml", "rb") as file:
+                data = tomli.load(file)
+                for module in data["tool"]["poetry"]["dependencies"]:
+                    try:
+                        if module == "python":
+                            continue
+                        print(f"[OK] {module} {version(module)}")
+                    except PackageNotFoundError:
+                        print(f"[KO] {module} not installed(pip install {module})")
+                        generate = False
+            print()
+        except ImportError:
+            print("\n###  IMPORTANT  ###")
+            print("\nPackage tomli not imported")
+            print("The package dependecy inspection cant be done by poetry")
+            print()
+            print("###################\n")
+            generate = False
     else:
         with open("requirements.txt") as file:
             for module in file.read().split("\n"):
@@ -33,7 +41,7 @@ def check_dep(mode: bool) -> bool:
     return generate
 
 
-generate = check_dep(1)
+generate = check_dep(0)
 
 
 if generate:
