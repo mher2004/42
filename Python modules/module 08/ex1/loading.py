@@ -3,14 +3,12 @@ from importlib.metadata import version, PackageNotFoundError
 print("\nLOADING STATUS: Loading programs...\n")
 
 
-
-
 def check_dep(mode: bool) -> bool:
     print("Checking dependencies:")
     generate = True
     if mode:
         try:
-            import tomli
+            import tomli  # type: ignore
             with open("pyproject.toml", "rb") as file:
                 data = tomli.load(file)
                 for module in data["tool"]["poetry"]["dependencies"]:
@@ -19,7 +17,8 @@ def check_dep(mode: bool) -> bool:
                             continue
                         print(f"[OK] {module} {version(module)}")
                     except PackageNotFoundError:
-                        print(f"[KO] {module} not installed(pip install {module})")
+                        print(f"[KO] {module} not installed\
+(pip install {module})")
                         generate = False
             print()
         except ImportError:
@@ -41,13 +40,13 @@ def check_dep(mode: bool) -> bool:
     return generate
 
 
-generate = check_dep(0)
+generate = check_dep(False)
 
 
 if generate:
-    import numpy
-    import pandas
-    import matplotlib.pyplot as plt
+    import numpy  # type: ignore
+    import pandas  # type: ignore
+    import matplotlib.pyplot as plt  # type: ignore
     print("Analyzing Matrix data...")
     print("Processing 1000 data points...")
     print("Generating visualization...")
