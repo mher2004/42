@@ -4,6 +4,8 @@ import tomli
 print("\nLOADING STATUS: Loading programs...\n")
 
 
+
+
 def check_dep(mode: bool) -> bool:
     print("Checking dependencies:")
     generate = True
