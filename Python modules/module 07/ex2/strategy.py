@@ -7,7 +7,7 @@ from typing import Any, Union
 
 class BattleStrategy(ABC):
     @abstractmethod
-    def act(self, creatur: Any) -> None:
+    def act(self, creature: Any) -> None:
         pass
 
     @abstractmethod
