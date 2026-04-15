@@ -8,7 +8,7 @@ def check_dep(mode: bool) -> bool:
     generate = True
     if mode:
         try:
-            import tomli  # type: ignore
+            import tomli
             with open("pyproject.toml", "rb") as file:
                 data = tomli.load(file)
                 for module in data["tool"]["poetry"]["dependencies"]:
@@ -44,7 +44,7 @@ generate = check_dep(False)
 
 
 if generate:
-    import numpy  # type: ignore
+    import numpy
     import pandas  # type: ignore
     import matplotlib.pyplot as plt  # type: ignore
     print("Analyzing Matrix data...")
