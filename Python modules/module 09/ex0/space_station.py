@@ -23,7 +23,7 @@ def main() -> None:
         crew_size=6,
         power_level=85.5,
         oxygen_level=92.3,
-        last_maintenance="2024-01-01T12:00:00"
+        last_maintenance=datetime(2024, 1, 1, 12, 0, 0)
     )
     print("Valid station created:")
     print("ID:", station.station_id)
@@ -41,7 +41,7 @@ def main() -> None:
             crew_size=21,
             power_level=85.5,
             oxygen_level=92.3,
-            last_maintenance="2024-01-01T12:00:00"
+            last_maintenance=datetime(2024, 1, 1, 12, 0, 0)
         )
         print("Valid station created:")
         print("ID:", station.station_id)
