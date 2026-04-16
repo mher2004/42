@@ -33,10 +33,10 @@ class AlienContact(BaseModel):
         if self.contact_type == ContactType.telepathic:
             if self.witness_count < 3:
                 raise ValueError("When contact type is telepathic\
- witness_count must be <=3")
+ witness_count must be >=3")
         if self.signal_strength > 7.0:
             if self.message_received is None:
-                raise ValueError("When signal_strength is <7.0\
+                raise ValueError("When signal_strength is >7.0\
  message_received must be not None")
         return self
 

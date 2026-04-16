@@ -52,7 +52,6 @@ class SpaceMission(BaseModel):
 
 
 def main() -> None:
-    print("Space Mission Crew Validation")
     print("=" * 45)
     try:
         mission = SpaceMission(
