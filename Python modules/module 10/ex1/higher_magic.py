@@ -9,7 +9,9 @@ def heal2(target: str, power: int) -> str:
     return f"Heal2 restores {target} for {power} HP"
 
 
-def spell_combiner(spell1: Callable, spell2: Callable) -> Callable:
+def spell_combiner(
+        spell1: Callable, spell2: Callable
+        ) -> Callable:
     if not (callable(spell1) and callable(spell2)):
         raise TypeError
     return lambda target, power: (spell1(target, power), spell2(target, power))

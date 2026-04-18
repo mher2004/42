@@ -5,7 +5,7 @@ from typing import Any
 
 
 def spell_reducer(spells: list[int], operation: str) -> int:
-    operations = {
+    operations: dict[str, Callable] = {
         "add": operator.add,
         "multiply": operator.mul,
         "max": max,
@@ -19,7 +19,7 @@ def spell_reducer(spells: list[int], operation: str) -> int:
 
 
 def partial_enchanter(base_enchantment: Callable) -> dict[str, Callable]:
-    funcs = {
+    funcs: dict[str, Callable] = {
         "one": functools.partial(base_enchantment, 50, "onee"),
         "two": functools.partial(base_enchantment, 50, "twoo"),
         "three": functools.partial(base_enchantment, 50, "threeee"),
@@ -49,7 +49,7 @@ def spell_dispatcher() -> Callable[[Any], str]:
 
     @spell.register(list)
     def _(arg: list) -> str:
-        return f"Multi-cast: {arg}"
+        return f"Multi-cast: {len(arg)} spells"
     return spell
 
 

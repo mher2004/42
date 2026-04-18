@@ -2,7 +2,7 @@ from collections.abc import Callable
 from typing import Any
 
 
-def mage_counter() -> Callable:
+def mage_counter() -> Callable[[], int]:
     a = 0
 
     def counter() -> int:
@@ -12,17 +12,18 @@ def mage_counter() -> Callable:
     return counter
 
 
-def spell_accumulator(initial_power: int) -> Callable:
+def spell_accumulator(initial_power: int) -> Callable[[int], int]:
+    total = initial_power
+
     def accumulator(power: int) -> int:
-        nonlocal initial_power
-        initial_power += power
-        return initial_power
+        nonlocal total
+        total += power
+        return total
     return accumulator
 
 
-def enchantment_factory(enchantment_type: str) -> Callable:
+def enchantment_factory(enchantment_type: str) -> Callable[[str], str]:
     def desc(item_name: str) -> str:
-        nonlocal enchantment_type
         return enchantment_type + " " + item_name
     return desc
 
