@@ -111,7 +111,7 @@ def parce_lines(f) -> list:
 
 
 def get_init(lines) -> dict:
-    res = dict()
+    res: dict[Any, Any] = dict()
     for field in ConfigFields:
         res[field.name] = None
     # print(lines)
