@@ -1,0 +1,12 @@
+# this is a comment
+WIDTH=22
+
+# another comment
+HEIGHT=12
+ENTRY=1,3
+EXIT=2,3
+OUTPUT_FILE=out.txt
+PERFECT=True
+SEED=asdda
+
+COLOR=blue
