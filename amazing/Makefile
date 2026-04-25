@@ -2,7 +2,7 @@ PY = python3
 MAIN = a_maze_ing.py
 
 run:
-	$(PY) $(MAIN)
+	$(PY) $(MAIN) config.txt
 
 install:
 	pip install -r requirements.txt

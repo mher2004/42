@@ -4,8 +4,6 @@ from enum import Enum
 from typing import Any, Tuple, Optional
 from errors import LineFormatError, ConfigFormatError
 
-CONFIG = "config.txt"
-
 
 class Color(Enum):
     yellow = 33
@@ -18,17 +16,14 @@ class Config(BaseModel):
     height: int = Field(..., ge=1)
     entry: Tuple[int, int]
     exit: Tuple[int, int]
-    # entryx: int = Field(..., ge=0)
-    # entryy: int = Field(..., ge=0)
-    # exitx: int = Field(..., ge=0)
-    # exity: int = Field(..., ge=0)
     output_file: str = Field(..., min_length=1)
     perfect: bool
     seed: Optional[str] = Field(..., min_length=1)
-    Color: Any = Color.white
+    color: Optional[Color] = Color.white
+    is_ft: bool = True
     model_config = {"validate_assignment": True}
 
-    @field_validator("Color", mode="before")
+    @field_validator("color", mode="before")
     @classmethod
     def parse_Color(cls, value):
         if value is None:
@@ -78,7 +73,7 @@ class ConfigFields(Enum):
     output_file = "OUTPUT_FILE"
     perfect = "PERFECT"
     seed = "SEED"
-    color = "Color"
+    color = "COLOR"
 
 
 class Line(BaseModel):
@@ -101,10 +96,13 @@ def parce_lines(f) -> list:
             # print(f"key = {splited[0]}")
             raise LineFormatError(f"Key '{splited[0]}' is not uppercase!")
             # print("passed 1")
-        form_lines.append(Line(
-            field=ConfigFields[splited[0].lower()],
-            value=splited[1])
-        )
+        try:
+            form_lines.append(Line(
+                field=ConfigFields[splited[0].lower()],
+                value=splited[1])
+            )
+        except KeyError:
+            raise ConfigFormatError(f"Key {splited[0]} is not accepted!")
         # print("done iter")
     # print("done cycle")
     return form_lines
@@ -127,25 +125,32 @@ def get_init(lines) -> dict:
     return res
 
 
-def parce() -> Config | None:
+def parce(config_file: str) -> Config | None:
+    res = None
     try:
-        with open(CONFIG, "r") as f:
+        with open(config_file, "r") as f:
             lines = parce_lines(f)
             if len(lines) < 5:
                 raise ConfigFormatError("Excessive line!")
             init_dict = get_init(lines)
             # print(init_dict)
             config = Config(**init_dict)
-            return config
+            if config.width < 9 or config.height < 7:
+                # print("Maze is not big enough to fit 42 pattern!")
+                config.is_ft = False
+            try:
+                with open(config.output_file, "w") as _:
+                    pass
+            except PermissionError:
+                print("No write permission to " +
+                      f"config file {config.output_file}!")
+            res = config
     except FileNotFoundError:
-        print("Config file (config.txt) not found!")
-        return None
+        print(f"Config file {config_file} not found!")
     except PermissionError:
-        print("No read permission to config file (config.txt)!")
-        return None
+        print(f"No read permission to config file {config_file}!")
     except ConfigFormatError as e:
         print(e)
-        return None
     except ValidationError as e:
         print("Validation error:", e)
-        return None
+    return res
