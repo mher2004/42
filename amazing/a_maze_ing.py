@@ -169,7 +169,8 @@ def clear_screen():
 def menu(config) -> None:
     alg = 0
     gen = MazeGenerator(config.width, config.height, config.entry, config.exit)
-    gen.generator(config.seed, is_ft=config.is_ft, perfect=config.perfect, alg=alg)
+    gen.generator(config.seed, is_ft=config.is_ft,
+                  perfect=config.perfect, alg=alg)
     ren = Render(config, gen.cells, gen.solution)
     gen.set_anim_func(ren.print_mat)
     Output.write_file(gen.cells, config.entry, config.exit,
@@ -208,7 +209,7 @@ def menu(config) -> None:
                 config.color = input("Input new Color:")
             elif option == 4:
                 gen.generator(config.seed, is_ft=config.is_ft,
-                              perfect=config.perfect, animate=True)
+                              perfect=config.perfect, animate=True, alg=alg)
                 # ren.set_sol(gen.solution)
                 # Output.write_file(gen.cells, config.entry,
                 #                  config.exit, gen.solution,
