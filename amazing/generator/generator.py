@@ -1,4 +1,3 @@
-# from errors import ConfigFormatError
 from collections import deque
 from typing import Callable, Any, Dict, Tuple, Optional
 import random

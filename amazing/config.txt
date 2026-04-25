@@ -1,10 +1,8 @@
 WIDTH=18
-# another comment
 HEIGHT=10
 ENTRY=0,0
 EXIT=13,9
 OUTPUT_FILE=out.txt
 PERFECT=True
 SEED=asdda
-
 COLOR=blue

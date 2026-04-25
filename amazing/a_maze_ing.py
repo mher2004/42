@@ -25,7 +25,6 @@ class Render:
         self.show_path = not self.show_path
 
     def render_matrix(self) -> None:
-        # print(config)
         border_symb = f"\033\
 [{self.config.color.value}m█\033[0m"
         entry_symb = f"\033[{self.entry_col}m█\033[0m"
@@ -137,8 +136,6 @@ class Output:
         res += f"{exit[0]},{exit[1]}\n"
         res += cls.gen_sol_str(solution)
         res += "\n"
-        # res += str(solution)
-        # res += "\n"
         return res
 
     @classmethod
@@ -150,9 +147,7 @@ class Output:
             seq.append(curr)
             curr = solution[curr]
         seq.reverse()
-        # res += str(seq)
         for i in range(1, len(seq)):
-            # res += (f"{seq[i-1]} -> {seq[i]}")
             if seq[i-1][0] > seq[i][0]:
                 res += "N"
             elif seq[i-1][0] < seq[i][0]:
@@ -226,10 +221,6 @@ def menu(config: parceing.Config) -> None:
             elif option == 4:
                 gen.generator(config.seed, is_ft=config.is_ft,
                               perfect=config.perfect, animate=True, alg=alg)
-                # ren.set_sol(gen.solution)
-                # Output.write_file(gen.cells, config.entry,
-                #                  config.exit, gen.solution,
-                #                  config.output_file)
             elif option == 5:
                 alg = not alg
                 print(alg)
