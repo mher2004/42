@@ -6,7 +6,11 @@ import sys
 
 
 class Render:
-    def __init__(self, config, cells, solution):
+    def __init__(
+            self,
+            config: parceing.Config,
+            cells: list,
+            solution: dict):
         self.config = config
         self.entry_col = 32
         self.exit_col = 31
@@ -14,7 +18,7 @@ class Render:
         self.set_sol(solution)
         self.show_path = False
 
-    def set_sol(self, solution) -> None:
+    def set_sol(self, solution: dict) -> None:
         self.solution = solution
 
     def switch_show_path(self) -> None:
@@ -22,7 +26,8 @@ class Render:
 
     def render_matrix(self) -> None:
         # print(config)
-        border_symb = f"\033[{self.config.color.value}m█\033[0m"
+        border_symb = f"\033\
+[{self.config.color.value}m█\033[0m"
         entry_symb = f"\033[{self.entry_col}m█\033[0m"
         exit_symb = f"\033[{self.exit_col}m█\033[0m"
         f2 = f"\033[{36}m█\033[0m"
@@ -105,12 +110,23 @@ class Render:
 
 class Output:
     @classmethod
-    def write_file(cls, maze, entry, exit, solution, output_file) -> None:
+    def write_file(
+            cls,
+            maze: list,
+            entry: tuple,
+            exit: tuple,
+            solution: dict,
+            output_file: str) -> None:
         with open(output_file, "w") as f:
             f.write(cls.gen_otput(maze, entry, exit, solution))
 
     @classmethod
-    def gen_otput(cls, maze, entry, exit, solution) -> str:
+    def gen_otput(
+            cls,
+            maze: list,
+            entry: tuple,
+            exit: tuple,
+            solution: dict) -> str:
         res = str()
         for row in maze:
             for cell in row:
@@ -162,11 +178,11 @@ class Cell:
         self.is_path = False
 
 
-def clear_screen():
+def clear_screen() -> None:
     print("\033[2J\033[H", end="")
 
 
-def menu(config) -> None:
+def menu(config: parceing.Config) -> None:
     alg = 0
     gen = MazeGenerator(config.width, config.height, config.entry, config.exit)
     gen.generator(config.seed, is_ft=config.is_ft,

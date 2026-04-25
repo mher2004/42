@@ -1,6 +1,6 @@
 # from errors import ConfigFormatError
 from collections import deque
-from typing import Callable, Any, Dict, Tuple
+from typing import Callable, Any, Dict, Tuple, Optional
 import random
 import time
 
@@ -19,7 +19,12 @@ class Cell:
 
 
 class MazeGenerator:
-    def __init__(self, width, height, entry, exit):
+    def __init__(
+            self,
+            width: int,
+            height: int,
+            entry: tuple,
+            exit: tuple):
         self.cells = [[Cell(i, j) for j in range(0, width)]
                       for i in range(0, height)]
         self.cells[entry[1]][entry[0]].is_entry = True
@@ -29,7 +34,7 @@ class MazeGenerator:
         self.entry = entry
         self.exit = exit
         self.solution: Dict[Tuple, Tuple | None] = dict()
-        self.anim_func = None
+        self.anim_func: Optional[Callable] = None
 
     def set_anim_func(self, anim_func: Callable) -> None:
         """Stes the animation variable"""
@@ -112,7 +117,8 @@ class MazeGenerator:
         self.solution = parent
 
     def check_walls(self, i1: int, j1: int, i2: int, j2: int) -> bool:
-        """This function tells if 2 cells are accessible or they have a wall between of them"""
+        """This function tells if 2 cells are accessible or\
+        they have a wall between of them"""
         direct = (i2 - i1, j2 - j1)
         directions = {
             (-1, 0): 0,
@@ -131,7 +137,8 @@ class MazeGenerator:
         return True
 
     def solve_neighboors(self, i: int, j: int) -> list[Cell]:
-        """Function for getting the neighboor cells where can be accessed from a specified cell"""
+        """Function for getting the neighboor cells where can\
+         be accessed from a specified cell"""
         neighboors = []
         directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]
         cells = self.cells
@@ -149,7 +156,8 @@ class MazeGenerator:
         return neighboors
 
     def get_neighboor(self, i: int, j: int) -> list[Cell]:
-        """Function for getting the not visited and not f2 cells around a specified cell"""
+        """Function for getting the not visited and not f2 cells\
+         around a specified cell"""
         neighboors = []
         directions = [(-1, 0), (0, -1), (1, 0), (0, 1)]
         cells = self.cells
@@ -179,7 +187,7 @@ class MazeGenerator:
 
     def generator(self, seed: str | None = None, alg: int = 0,
                   perfect: bool = True, is_ft: bool = False,
-                  animate=False) -> str | None:
+                  animate: bool = False) -> str | None:
         """The main generator function for the maze"""
         if alg not in range(0, 2):
             print("ERROR ALGO NOT FOUND")
@@ -199,7 +207,7 @@ class MazeGenerator:
         self.solve()
         return seed
 
-    def alg1(self, animate) -> None:
+    def alg1(self, animate: bool) -> None:
         """Deep First Search's algorithm for maze generation."""
         stack = [self.cells[self.entry[1]][self.entry[0]]]
         stack[-1].is_visited = True
@@ -218,7 +226,7 @@ class MazeGenerator:
                 self.anim_func()
                 time.sleep(0.05)
 
-    def alg2(self, animate) -> None:
+    def alg2(self, animate: bool) -> None:
         """Randomized Prim's algorithm for maze generation."""
         start = self.cells[self.entry[1]][self.entry[0]]
         start.is_visited = True

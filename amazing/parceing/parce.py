@@ -3,6 +3,7 @@ from pydantic import field_validator
 from enum import Enum
 from typing import Any, Tuple, Optional
 from errors import LineFormatError, ConfigFormatError
+from io import TextIOWrapper
 
 
 class Color(Enum):
@@ -19,13 +20,13 @@ class Config(BaseModel):
     output_file: str = Field(..., min_length=1)
     perfect: bool
     seed: Optional[str] = Field(..., min_length=1)
-    color: Optional[Color] = Color.white
+    color: Any[Color, str] = Color.white
     is_ft: bool = True
     model_config = {"validate_assignment": True}
 
     @field_validator("color", mode="before")
     @classmethod
-    def parse_Color(cls, value):
+    def parse_Color(cls, value: str) -> Enum:
         if value is None:
             return Color.white
         try:
@@ -33,8 +34,6 @@ class Config(BaseModel):
         except KeyError:
             print(f"Invalid Color key value '{value}'")
             print("Choose from: yellow, blue, white")
-            # print("Color set to the default - white")
-            # return Color.white
             raise LineFormatError(f"Invalid Color '{value}'")
 
     @field_validator("entry", "exit", mode="before")
@@ -59,9 +58,6 @@ class Config(BaseModel):
                                   "too big and out of border!")
         if self.exit[0] == self.entry[0] and self.exit[1] == self.entry[1]:
             raise ConfigFormatError("ENTRY and EXIT overlap!")
-        # if self.perfect is not True and self.perfect is not False:
-        #     raise LineFormatError(f"Value of PERFECT '{self.perfect}' " +
-        #                           "is niether True, nor False")
         return self
 
 
@@ -81,21 +77,16 @@ class Line(BaseModel):
     value: Any
 
 
-def parce_lines(f) -> list:
+def parce_lines(f: TextIOWrapper) -> list:
     raw_lines = [line.strip() for line in f.readlines()
                  if not line.lstrip().startswith("#") and line.strip()]
-    # print(raw_lines)
     form_lines = list()
     for line in raw_lines:
         splited = line.split("=")
-        # print("splited =", splited)
         if len(splited) != 2:
-            # print(f"len = {len(splited)}")
             raise LineFormatError(f"Invalid config line '{line}' format")
         if splited[0].upper() != splited[0]:
-            # print(f"key = {splited[0]}")
             raise LineFormatError(f"Key '{splited[0]}' is not uppercase!")
-            # print("passed 1")
         try:
             form_lines.append(Line(
                 field=ConfigFields[splited[0].lower()],
@@ -103,25 +94,18 @@ def parce_lines(f) -> list:
             )
         except KeyError:
             raise ConfigFormatError(f"Key {splited[0]} is not accepted!")
-        # print("done iter")
-    # print("done cycle")
     return form_lines
 
 
-def get_init(lines) -> dict:
+def get_init(lines: list) -> dict:
     res: dict[Any, Any] = dict()
     for field in ConfigFields:
         res[field.name] = None
-    # print(lines)
-    # print("1")
     for line in lines:
         if res[line.field.name]:
             raise ConfigFormatError(
                 f"Repeated config key '{line.field.name}'!")
-        # print("2")
         res[line.field.name] = line.value
-        # print("3")
-    # print(res)
     return res
 
 
@@ -133,10 +117,8 @@ def parce(config_file: str) -> Config | None:
             if len(lines) < 5:
                 raise ConfigFormatError("Excessive line!")
             init_dict = get_init(lines)
-            # print(init_dict)
             config = Config(**init_dict)
             if config.width < 9 or config.height < 7:
-                # print("Maze is not big enough to fit 42 pattern!")
                 config.is_ft = False
             try:
                 with open(config.output_file, "w") as _:
