@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from typing import Callable
 
 
 @dataclass
@@ -12,4 +13,14 @@ class Cell:
     is_exit = False
     is_f2 = False
     is_visited = False
-    is_path = False
+
+
+@dataclass
+class MazeGenerator:
+    cells = list
+    width: int
+    height: int
+    entry: tuple
+    exit: tuple
+    solution: dict
+    anim_func: Callable

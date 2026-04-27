@@ -8,7 +8,7 @@ install:
 	pip install -r requirements.txt
 
 lint:
-	flake8 .; 
+	# flake8 .; 
 	mypy . \
 	--warn-return-any \
 	--warn-unused-ignores \

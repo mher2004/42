@@ -20,7 +20,7 @@ class Config(BaseModel):
     output_file: str = Field(..., min_length=1)
     perfect: bool
     seed: Optional[str] = Field(..., min_length=1)
-    color: Any[Color, str] = Color.white
+    color: Color | str = Color.white
     is_ft: bool = True
     model_config = {"validate_assignment": True}
 
@@ -39,9 +39,11 @@ class Config(BaseModel):
     @field_validator("entry", "exit", mode="before")
     @classmethod
     def parse_entry(cls, value: str) -> tuple:
+        if not value:
+            raise ConfigFormatError("No ENTRY or EXIT!")
         splited = value.split(",")
         if len(splited) != 2:
-            raise LineFormatError("Wrong ENTRY value format!")
+            raise LineFormatError("Wrong ENTRY or EXIT value format!")
         return (int(splited[0]), int(splited[1]))
 
     @model_validator(mode="after")

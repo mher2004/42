@@ -1,16 +1,40 @@
 import parceing
 from errors import ConfigFormatError
-from generator import MazeGenerator
+from mazegen import MazeGenerator
 from math import ceil, floor
 import sys
 
 
 class Render:
+    """Handles all rendering logic for displaying the maze in the terminal.
+
+    Converts the internal cell grid into a coloured block-character matrix
+    and prints it to stdout. Optionally overlays the solved path and any
+    special '42' pattern cells.
+
+    Attributes:
+        config (parceing.Config): The parsed configuration object.
+        entry_col (int): ANSI colour code used to render the entry cell.
+        exit_col (int): ANSI colour code used to render the exit cell.
+        cells (list): 2-D list of Cell objects that make up the maze.
+        solution (dict): BFS parent-map from the solver, mapping each cell
+            coordinate to its predecessor on the shortest path.
+        show_path (bool): Whether to overlay the solution path on the render.
+    """
+
     def __init__(
             self,
             config: parceing.Config,
             cells: list,
             solution: dict):
+        """Initialise the renderer with maze data.
+
+        Args:
+            config (parceing.Config): Parsed configuration containing
+                dimensions, colours, entry/exit positions, etc.
+            cells (list): 2-D list of Cell objects representing the maze grid.
+            solution (dict): BFS parent-map returned by MazeGenerator.solve().
+        """
         self.config = config
         self.entry_col = 32
         self.exit_col = 31
@@ -19,18 +43,47 @@ class Render:
         self.show_path = False
 
     def set_sol(self, solution: dict) -> None:
+        """Replace the current solution with a new one.
+
+        Called after the maze is regenerated so the renderer always holds
+        the solution that corresponds to the currently displayed maze.
+
+        Args:
+            solution (dict): New BFS parent-map to store.
+        """
         self.solution = solution
 
     def switch_show_path(self) -> None:
+        """Toggle the visibility of the solution path overlay.
+
+        Each call flips ``show_path`` between ``True`` and ``False``.
+        The change takes effect on the next call to :meth:`print_mat`.
+        """
         self.show_path = not self.show_path
 
     def render_matrix(self) -> None:
-        border_symb = f"\033\
-[{self.config.color.value}m█\033[0m"
+        """Build the display matrix from the current cell grid.
+
+        Populates ``self.matrix`` — a 2-D list of coloured block characters
+        (``█``) or spaces — by:
+
+        1. Filling every position with the wall colour block.
+        2. Carving open passages according to each cell's border flags.
+        3. Marking entry and exit cells with their distinct colours.
+        4. Overlaying any '42'-pattern cells with their own colour.
+        5. If ``show_path`` is ``True``, tracing the BFS solution from the
+           exit back to the entry and marking each step.
+
+        Raises:
+            ConfigFormatError: If a '42'-pattern cell overlaps with the
+                entry or exit cell.
+        """
+        if isinstance(self.config.color, parceing.Color):
+            border_symb = f"\033[{self.config.color.value}m█\033[0m"
         entry_symb = f"\033[{self.entry_col}m█\033[0m"
         exit_symb = f"\033[{self.exit_col}m█\033[0m"
         f2 = f"\033[{36}m█\033[0m"
-        path = f"\033[{33}m█\033[0m"
+        path = f"\033[{35}m█\033[0m"
         self.matrix = [[border_symb for j in range(0, self.config.width * 3)]
                        for i in range(0, self.config.height * 3)]
         for row in self.cells:
@@ -100,6 +153,12 @@ class Render:
                 current = self.solution[current]
 
     def print_mat(self) -> None:
+        """Render and print the maze to stdout.
+
+        Calls :meth:`render_matrix` to rebuild the display matrix and then
+        iterates over every row, printing each symbol without a separating
+        space, followed by a newline at the end of each row.
+        """
         self.render_matrix()
         for row in self.matrix:
             for symb in row:
@@ -108,6 +167,13 @@ class Render:
 
 
 class Output:
+    """Utility class for serialising maze data to a file.
+
+    All methods are class methods; the class is never instantiated directly.
+    The file format encodes walls as hexadecimal digits, followed by the
+    entry/exit coordinates and the textual step-by-step solution.
+    """
+
     @classmethod
     def write_file(
             cls,
@@ -116,6 +182,16 @@ class Output:
             exit: tuple,
             solution: dict,
             output_file: str) -> None:
+        """Serialise the maze and write it to a file on disk.
+
+        Args:
+            maze (list): 2-D list of Cell objects representing the maze grid.
+            entry (tuple): ``(col, row)`` coordinates of the entry cell.
+            exit (tuple): ``(col, row)`` coordinates of the exit cell.
+            solution (dict): BFS parent-map produced by
+                :meth:`MazeGenerator.solve`.
+            output_file (str): Destination file path.
+        """
         with open(output_file, "w") as f:
             f.write(cls.gen_otput(maze, entry, exit, solution))
 
@@ -126,10 +202,37 @@ class Output:
             entry: tuple,
             exit: tuple,
             solution: dict) -> str:
+        """Build the full serialised string representation of the maze.
+
+        Each cell's four border flags (North, East, South, West) are packed
+        into a 4-bit value and written as an uppercase hex digit.  Rows are
+        separated by newlines.  After the grid the entry coordinates, exit
+        coordinates, and solution string are appended.
+
+        Args:
+            maze (list): 2-D list of Cell objects.
+            entry (tuple): ``(col, row)`` coordinates of the entry cell.
+            exit (tuple): ``(col, row)`` coordinates of the exit cell.
+            solution (dict): BFS parent-map produced by
+                :meth:`MazeGenerator.solve`.
+
+        Returns:
+            str: The complete serialised maze string ready to be written to
+                a file.
+        """
         res = str()
         for row in maze:
             for cell in row:
-                res += hex(int(cell.bords, 2))[-1].upper()
+                val = 0
+                if cell.bords[3] == "1":
+                    val += 8
+                if cell.bords[2] == "1":
+                    val += 4
+                if cell.bords[1] == "1":
+                    val += 2
+                if cell.bords[0] == "1":
+                    val += 1
+                res += hex(val)[-1].upper()
             res += "\n"
         res += "\n"
         res += f"{entry[0]},{entry[1]}\n"
@@ -140,6 +243,21 @@ class Output:
 
     @classmethod
     def gen_sol_str(cls, solution: dict) -> str:
+        """Convert the BFS parent-map into a cardinal-direction string.
+
+        Traces the path from entry to exit using the parent-map, then
+        encodes each step as a single character: ``N`` (north / up),
+        ``S`` (south / down), ``E`` (east / right), or ``W`` (west / left).
+
+        Args:
+            solution (dict): BFS parent-map where each key is a
+                ``(row, col)`` tuple and the value is its predecessor
+                (or ``None`` for the entry cell).
+
+        Returns:
+            str: Sequence of direction characters describing the shortest
+                path from entry to exit (e.g. ``"NESSWN"``).
+        """
         res = str()
         seq = list()
         curr = list(solution.keys())[-1]
@@ -159,25 +277,36 @@ class Output:
         return res
 
 
-class Cell:
-    def __init__(self, i: int, j: int) -> None:
-        self.bords = "1111"
-        self.i = i
-        self.j = j
-        self.mat_i = i * 3 + 1
-        self.mat_j = j * 3 + 1
-        self.is_entry = False
-        self.is_exit = False
-        self.is_f2 = False
-        self.is_visited = False
-        self.is_path = False
-
-
 def clear_screen() -> None:
+    """Clear the terminal screen using ANSI escape codes.
+
+    Sends the ``\\033[2J`` (erase display) and ``\\033[H`` (move cursor to
+    home) escape sequences so the next render overwrites the previous one
+    in place rather than scrolling.
+    """
     print("\033[2J\033[H", end="")
 
 
 def menu(config: parceing.Config) -> None:
+    """Run the interactive menu loop for the maze application.
+
+    Generates an initial maze, writes it to the configured output file,
+    and then repeatedly presents a numbered menu to the user until they
+    choose to exit.  Available options are:
+
+    1. Regenerate the maze with a new random seed.
+    2. Toggle the shortest-path overlay.
+    3. Change the wall colour.
+    4. Animate the current generation algorithm step-by-step.
+    5. Switch between the DFS and Randomised Prim's algorithms and
+       regenerate.
+    6. Exit the application.
+
+    Args:
+        config (parceing.Config): Fully parsed configuration object
+            containing maze dimensions, entry/exit positions, colour
+            preference, output file path, and generation flags.
+    """
     alg = 0
     gen = MazeGenerator(config.width, config.height, config.entry, config.exit)
     gen.generator(config.seed, is_ft=config.is_ft,
@@ -219,11 +348,18 @@ def menu(config: parceing.Config) -> None:
                 print("Choose from: yellow, blue, white")
                 config.color = input("Input new Color:")
             elif option == 4:
+                if ren.show_path:
+                    ren.switch_show_path()
                 gen.generator(config.seed, is_ft=config.is_ft,
                               perfect=config.perfect, animate=True, alg=alg)
             elif option == 5:
                 alg = not alg
-                print(alg)
+                config.seed = gen.generator(
+                    is_ft=config.is_ft, perfect=config.perfect, alg=alg)
+                ren.set_sol(gen.solution)
+                Output.write_file(gen.cells, config.entry,
+                                  config.exit, gen.solution,
+                                  config.output_file)
             elif option == 6:
                 break
         except (TypeError, ValueError):
@@ -233,6 +369,13 @@ def menu(config: parceing.Config) -> None:
 
 
 def main() -> None:
+    """Entry point for the maze application.
+
+    Reads the config file path from ``sys.argv``, parses it via
+    ``parceing.parce``, and launches the interactive :func:`menu`.
+    Prints a usage message if the wrong number of arguments is supplied,
+    or an error message if parsing or generation fails.
+    """
     argv = sys.argv
     if len(argv) != 2:
         print("Invalid atgv! Should be: python3 a_maze_ing.py <configfile>")

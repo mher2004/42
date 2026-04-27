@@ -24,6 +24,35 @@ class MazeGenerator:
             height: int,
             entry: tuple,
             exit: tuple):
+        if not isinstance(width, int) or not isinstance(height, int):
+            raise TypeError("Width and height must be integers")
+
+        if width <= 0 or height <= 0:
+            raise ValueError("Width and height must be positive")
+
+        if width < 2 or height < 2:
+            raise ValueError("Maze must be at least 2x2")
+
+        if not (isinstance(entry, tuple) and isinstance(exit, tuple)):
+            raise TypeError("Entry and exit must be tuples")
+
+        if len(entry) != 2 or len(exit) != 2:
+            raise ValueError("Entry and exit must be (x, y)")
+
+        ex, ey = entry
+        xx, xy = exit
+
+        if not isinstance(ex, int) or not isinstance(ey, int):
+            raise TypeError("Entry must be integers")
+
+        if not isinstance(xx, int) or not isinstance(xy, int):
+            raise TypeError("Exit must be integers")
+
+        if not (0 <= ex < width and 0 <= ey < height):
+            raise ValueError("Entry is outside maze bounds")
+
+        if not (0 <= xx < width and 0 <= xy < height):
+            raise ValueError("Exit is outside maze bounds")
         self.cells = [[Cell(i, j) for j in range(0, width)]
                       for i in range(0, height)]
         self.cells[entry[1]][entry[0]].is_entry = True
@@ -171,16 +200,16 @@ class MazeGenerator:
     def make_imperfect(self) -> None:
         """Function for making the maze imperfect"""
         entry_cell = self.cells[self.entry[1]][self.entry[0]]
-        if entry_cell.bords[0] == "1":
+        if entry_cell.bords[0] == "1" and entry_cell.i != 0:
             self.berlini_pat(
                 self.entry[1], self.entry[0], self.entry[1] - 1, self.entry[0])
-        elif entry_cell.bords[1] == "1":
+        elif entry_cell.bords[1] == "1" and entry_cell.j != self.width - 1:
             self.berlini_pat(
                 self.entry[1], self.entry[0], self.entry[1], self.entry[0] + 1)
-        elif entry_cell.bords[2] == "1":
+        elif entry_cell.bords[2] == "1" and entry_cell.i != self.height - 1:
             self.berlini_pat(
                 self.entry[1], self.entry[0], self.entry[1] + 1, self.entry[0])
-        elif entry_cell.bords[3] == "1":
+        elif entry_cell.bords[3] == "1" and entry_cell.j != 0:
             self.berlini_pat(
                 self.entry[1], self.entry[0], self.entry[1], self.entry[0] - 1)
 

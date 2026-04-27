@@ -1,8 +1,8 @@
 WIDTH=18
-HEIGHT=10
+HEIGHT=20
 ENTRY=0,0
 EXIT=13,9
 OUTPUT_FILE=out.txt
 PERFECT=True
-SEED=asdda
-COLOR=blue
+# SEED=asdda
+COLOR=white

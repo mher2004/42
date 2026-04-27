@@ -1,4 +1,4 @@
-*This project has been created as part of the 42 curriculum by mmkrtchy and vpolikha.*
+*This project has been created as part of the 42 curriculum by mmkrtchy, vpolikha.*
 
 # A-Maze-ing
 

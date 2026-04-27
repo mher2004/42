@@ -1,3 +1,3 @@
-from .parce import parce, Config
+from .parce import parce, Config, Color
 
-__all__ = ["parce", "Config"]
+__all__ = ["parce", "Config", "Color"]
