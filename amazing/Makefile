@@ -8,7 +8,7 @@ install:
 	pip install -r requirements.txt
 
 lint:
-	# flake8 .; 
+	flake8 .
 	mypy . \
 	--warn-return-any \
 	--warn-unused-ignores \
@@ -17,11 +17,15 @@ lint:
 	--check-untyped-defs
 
 lint-strict:
-	flake8 .; mypy . --strict
+	flake8 .
+	mypy . --strict
+
+debug:
+	$(PY) -m pdb $(MAIN)
 
 clean:
 	find . -type d -name "__pycache__" -exec rm -rf {} +
 	find . -type d -name ".mypy_cache" -exec rm -rf {} +
 
-.PHONY: run install lint lint-strict clean
+.PHONY: run install lint lint-strict clean debug
 

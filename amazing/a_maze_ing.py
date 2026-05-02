@@ -122,35 +122,35 @@ class Render:
                     self.matrix[cell.mat_i - 1][cell.mat_j - 1] = f2
                     self.matrix[cell.mat_i + 1][cell.mat_j - 1] = f2
                     self.matrix[cell.mat_i][cell.mat_j] = f2
-            current = (self.config.exit[1], self.config.exit[0])
-            while current and self.show_path:
-                ci, cj = current
-                if self.solution[current] is None:
-                    break
+        current = (self.config.exit[1], self.config.exit[0])
+        while current and self.show_path:
+            ci, cj = current
+            if self.solution[current] is None:
+                break
 
-                pi, pj = self.solution[current]
-                ci_mat = ci * 3 + 1
-                cj_mat = cj * 3 + 1
-                step = ((pi - ci) * 3, (pj - cj) * 3)
-                cell = self.cells[ci][cj]
+            pi, pj = self.solution[current]
+            ci_mat = ci * 3 + 1
+            cj_mat = cj * 3 + 1
+            step = ((pi - ci) * 3, (pj - cj) * 3)
+            cell = self.cells[ci][cj]
 
-                if cell.is_entry:
-                    self.matrix[ci_mat][cj_mat] = path
-                    current = self.solution[current]
-                    continue
-
-                if not cell.is_exit:
-                    self.matrix[ci_mat][cj_mat] = path
-
-                self.matrix[
-                    ci_mat + floor(step[0] / 2)
-                ][cj_mat + floor(step[1] / 2)] = path
-
-                self.matrix[
-                    ci_mat + ceil(step[0] / 2)
-                ][cj_mat + ceil(step[1] / 2)] = path
-
+            if cell.is_entry:
+                self.matrix[ci_mat][cj_mat] = path
                 current = self.solution[current]
+                continue
+
+            if not cell.is_exit:
+                self.matrix[ci_mat][cj_mat] = path
+
+            self.matrix[
+                ci_mat + floor(step[0] / 2)
+            ][cj_mat + floor(step[1] / 2)] = path
+
+            self.matrix[
+                ci_mat + ceil(step[0] / 2)
+            ][cj_mat + ceil(step[1] / 2)] = path
+
+            current = self.solution[current]
 
     def print_mat(self) -> None:
         """Render and print the maze to stdout.
@@ -309,8 +309,8 @@ def menu(config: parceing.Config) -> None:
     """
     alg = 0
     gen = MazeGenerator(config.width, config.height, config.entry, config.exit)
-    gen.generator(config.seed, is_ft=config.is_ft,
-                  perfect=config.perfect, alg=alg)
+    config.seed = gen.generator(config.seed, is_ft=config.is_ft,
+                                perfect=config.perfect, alg=alg)
     ren = Render(config, gen.cells, gen.solution)
     gen.set_anim_func(ren.print_mat)
     Output.write_file(gen.cells, config.entry, config.exit,
@@ -350,12 +350,21 @@ def menu(config: parceing.Config) -> None:
             elif option == 4:
                 if ren.show_path:
                     ren.switch_show_path()
-                gen.generator(config.seed, is_ft=config.is_ft,
-                              perfect=config.perfect, animate=True, alg=alg)
+                    config.seed = gen.generator(seed=config.seed,
+                                                is_ft=config.is_ft,
+                                                perfect=config.perfect,
+                                                animate=True, alg=alg)
+                    ren.switch_show_path()
+                else:
+                    config.seed = gen.generator(seed=config.seed,
+                                                is_ft=config.is_ft,
+                                                perfect=config.perfect,
+                                                animate=True, alg=alg)
             elif option == 5:
-                alg = not alg
-                config.seed = gen.generator(
-                    is_ft=config.is_ft, perfect=config.perfect, alg=alg)
+                alg = (alg + 1) % 2
+                gen.generator(seed=config.seed,
+                              is_ft=config.is_ft, perfect=config.perfect,
+                              alg=alg)
                 ren.set_sol(gen.solution)
                 Output.write_file(gen.cells, config.entry,
                                   config.exit, gen.solution,
@@ -378,7 +387,7 @@ def main() -> None:
     """
     argv = sys.argv
     if len(argv) != 2:
-        print("Invalid atgv! Should be: python3 a_maze_ing.py <configfile>")
+        print("Invalid argv! Should be: python3 a_maze_ing.py <configfile>")
         return
     config_file = argv[1]
     try:
@@ -388,6 +397,8 @@ def main() -> None:
         menu(config)
     except ConfigFormatError as e:
         print(e)
+    except KeyboardInterrupt:
+        print("Program interrupted from keyboard!")
     except Exception as e:
         print(f"UnknownError:{e}")
 

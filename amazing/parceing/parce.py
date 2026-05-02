@@ -19,7 +19,7 @@ class Config(BaseModel):
     exit: Tuple[int, int]
     output_file: str = Field(..., min_length=1)
     perfect: bool
-    seed: Optional[str] = Field(..., min_length=1)
+    seed: Optional[str] = Field(None, min_length=1)
     color: Color | str = Color.white
     is_ft: bool = True
     model_config = {"validate_assignment": True}
@@ -116,8 +116,8 @@ def parce(config_file: str) -> Config | None:
     try:
         with open(config_file, "r") as f:
             lines = parce_lines(f)
-            if len(lines) < 5:
-                raise ConfigFormatError("Excessive line!")
+            if len(lines) < 6:
+                raise ConfigFormatError("Too few lines!")
             init_dict = get_init(lines)
             config = Config(**init_dict)
             if config.width < 9 or config.height < 7:

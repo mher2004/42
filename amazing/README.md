@@ -47,7 +47,11 @@ make lint-strict   # flake8 + mypy --strict
 ```bash
 make clean
 ```
+### Debug
 
+```bash
+make debug
+```
 ---
 
 ## Configuration File Format
@@ -188,8 +192,8 @@ After calling `generator()`:
 
 ```bash
 pip install build
-python -m build
-# produces dist/mazegen-1.0.0-py3-none-any.whl and dist/mazegen-1.0.0.tar.gz
+python -m build --outdir .
+# produces mazegen-1.0.0-py3-none-any.whl and mazegen-1.0.0.tar.gz
 ```
 
 Install in any virtualenv:

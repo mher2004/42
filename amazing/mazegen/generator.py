@@ -200,18 +200,34 @@ class MazeGenerator:
     def make_imperfect(self) -> None:
         """Function for making the maze imperfect"""
         entry_cell = self.cells[self.entry[1]][self.entry[0]]
-        if entry_cell.bords[0] == "1" and entry_cell.i != 0:
-            self.berlini_pat(
-                self.entry[1], self.entry[0], self.entry[1] - 1, self.entry[0])
-        elif entry_cell.bords[1] == "1" and entry_cell.j != self.width - 1:
-            self.berlini_pat(
-                self.entry[1], self.entry[0], self.entry[1], self.entry[0] + 1)
-        elif entry_cell.bords[2] == "1" and entry_cell.i != self.height - 1:
-            self.berlini_pat(
-                self.entry[1], self.entry[0], self.entry[1] + 1, self.entry[0])
-        elif entry_cell.bords[3] == "1" and entry_cell.j != 0:
-            self.berlini_pat(
-                self.entry[1], self.entry[0], self.entry[1], self.entry[0] - 1)
+        f = 1
+        while f:
+            f = 0
+            if entry_cell.bords[0] == "1" and entry_cell.i != 0 and (
+                    not self.cells[entry_cell.i-1][entry_cell.j].is_f2):
+                self.berlini_pat(
+                    entry_cell.i, entry_cell.j, entry_cell.i - 1, entry_cell.j)
+            elif entry_cell.bords[
+                    1] == "1" and entry_cell.j != self.width - 1 and (
+                    not self.cells[entry_cell.i][entry_cell.j+1].is_f2):
+                self.berlini_pat(
+                    entry_cell.i, entry_cell.j, entry_cell.i, entry_cell.j + 1)
+            elif entry_cell.bords[
+                    2] == "1" and entry_cell.i != self.height - 1 and (
+                    not self.cells[entry_cell.i+1][entry_cell.j].is_f2):
+                self.berlini_pat(
+                    entry_cell.i, entry_cell.j, entry_cell.i + 1, entry_cell.j)
+            elif entry_cell.bords[3] == "1" and entry_cell.j != 0 and (
+                    not self.cells[entry_cell.i][entry_cell.j-1].is_f2):
+                self.berlini_pat(
+                    entry_cell.i, entry_cell.j, entry_cell.i, entry_cell.j - 1)
+            else:
+                f = 1
+                entry_cell = self.cells[random.randint(
+                    0, self.height - 1)][random.randint(0, self.width - 1)]
+                while entry_cell.is_f2:
+                    entry_cell = self.cells[random.randint(
+                        0, self.height - 1)][random.randint(0, self.width - 1)]
 
     def generator(self, seed: str | None = None, alg: int = 0,
                   perfect: bool = True, is_ft: bool = False,
