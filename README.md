@@ -12,15 +12,8 @@ Hey! This is my personal repository gathering all the projects I've completed at
 | `ft_printf` | C | Variadic functions & formatted output |
 | `get_next_line` | C | File descriptor reading |
 | `push_swap` | C | Sorting algorithms & stack manipulation |
-| `Python Module 00` | Python | Python fundamentals |
-| `Python Module 01` | Python | Object-Oriented Programming |
-| `Python Module 02` | Python | Advanced OOP concepts |
-| `Python Module 03` | Python | Exception handling |
-| `Python Module 04` | Python | File handling & I/O |
-| `Python Module 05` | Python | More advanced Python structures |
-| `Python Module 06` | Python | Containers & data handling |
-| `Python Module 07` | Python | Abstract classes & interfaces |
-| `Python Module 08` | Python | Virtual environments, dependency setting |
+| `Python Modules` | Python | Python fundamentals and functionality |
+| `Amazing` | Python | A generator of mazes |
 
 ---
 
