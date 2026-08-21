@@ -35,14 +35,14 @@ def zone_maker(specs: str) -> ZoneSpec:
         other[0] = other[0][1:]
         other[-1] = other[-1][:-1]
         for i in other:
-            if len(i) == 0:
-                pass
+            if not i:
+                continue
             if "color" in i:
                 color = i.split("=")[1]
             elif "zone" in i:
                 zone = i.split("=")[1]
             elif "max_drones" in i:
-                max_drones = i.split("=")[1]
+                max_drones = int(i.split("=")[1])
             else:
                 raise ValueError("Wrong format for option list")
 
@@ -79,6 +79,9 @@ def parse_metadata(raw: str) -> dict[str, str]:
         "error": 0
     }
     raw_lines = raw.splitlines()
+    raw_lines = [
+        i for i in raw_lines if i.strip() and not i.strip().startswith("#")
+        ]
 
     try:
         if len(raw_lines) < 5:
