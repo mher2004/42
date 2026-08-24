@@ -19,10 +19,23 @@ class ConnSpec:
     max_link_capacity: int = 1
 
 
+def parse_positive_int(raw: str, field_name: str) -> int:
+    try:
+        value = int(raw)
+    except ValueError:
+        raise ValueError(f"{field_name} must be an integer, got {raw!r}")
+    if value <= 0:
+        raise ValueError(f"{field_name} must be positive, got {value}")
+    return value
+
+
 def zone_maker(specs: str) -> ZoneSpec:
+    VALID_ZONE_TYPES = {"normal", "blocked", "restricted", "priority"}
     if len(specs.split()) < 3:
         raise ValueError("Wrong hub data insertion format")
     name = specs.split()[0]
+    if "-" in name:
+        raise ValueError(f"Zone name '{name}' must not contain dashes")
     x = int(specs.split()[1])
     y = int(specs.split()[2])
     zone = "normal"
@@ -42,11 +55,15 @@ def zone_maker(specs: str) -> ZoneSpec:
             elif "zone" in i:
                 zone = i.split("=")[1]
             elif "max_drones" in i:
-                max_drones = int(i.split("=")[1])
+                max_drones = parse_positive_int(i.split("=")[1], "max_drones")
             else:
                 raise ValueError("Wrong format for option list")
 
+    if zone not in VALID_ZONE_TYPES:
+        raise ValueError(f"Invalid zone type: {zone!r}")
+
     obj = ZoneSpec(name, x, y, zone, color, max_drones)
+
     return obj
 
 
@@ -62,10 +79,33 @@ def connection_maker(specs: str) -> ConnSpec:
             raise ValueError("Wrong connection data insertion format")
         if len(specs.split()[-1][1:-1].split("=")) != 2:
             raise ValueError("Wrong connection data insertion format")
-        other = int(specs.split()[-1][1:-1].split("=")[1])
+        if specs.split()[-1][1:-1].split("=")[0] != "max_link_capacity":
+            raise ValueError("Wrong connection data insertion format")
+        other = parse_positive_int(
+            specs.split()[-1][1:-1].split("=")[1],
+            "max_link_capacity")
 
     obj = ConnSpec(names[0], names[1], other)
     return obj
+
+
+def validate_structure(metadata: dict) -> None:
+    all_zones = [metadata["start_hub"], metadata["end_hub"], *metadata["hub"]]
+    names = [z.name for z in all_zones]
+    if len(names) != len(set(names)):
+        raise ValueError("Duplicate zone name detected")
+
+    zone_names = set(names)
+    seen_edges: set[frozenset[str]] = set()
+    for conn in metadata["connection"]:
+        if conn.name1 not in zone_names or conn.name2 not in zone_names:
+            raise ValueError(f"Connection references unknown zone:\
+ {conn.name1}-{conn.name2}")
+        edge = frozenset({conn.name1, conn.name2})
+        if edge in seen_edges:
+            raise ValueError(f"Duplicate connection:\
+ {conn.name1}-{conn.name2}")
+        seen_edges.add(edge)
 
 
 def parse_metadata(raw: str) -> dict[str, str]:
@@ -80,33 +120,55 @@ def parse_metadata(raw: str) -> dict[str, str]:
     }
     raw_lines = raw.splitlines()
     raw_lines = [
-        i for i in raw_lines if i.strip() and not i.strip().startswith("#")
+        (i, raw_lines[i - 1]) for i in range(1, len(raw_lines) + 1)
+    ]
+    raw_lines = [
+        i for i in raw_lines if i[1].strip() and not i[1].strip().startswith(
+            "#")
         ]
 
     try:
         if len(raw_lines) < 5:
             raise ValueError("Not enough information for the graph")
-        if raw_lines[0][:len("nb_drones:")] != "nb_drones:":
-            raise ValueError("Error of nb_drones data input format")
+        if raw_lines[0][1][:len("nb_drones:")] != "nb_drones:":
+            raise ValueError(f"Line {raw_lines[0][0]}: \
+Error of nb_drones data input format")
         else:
-            metadata["nb_drones"] = int(raw_lines[0][len("nb_drones:"):])
-        if raw_lines[1][:len("start_hub:")] != "start_hub:":
-            raise ValueError("Error of start_hub data input format")
+            metadata["nb_drones"] = parse_positive_int(
+                raw_lines[0][1][len("nb_drones:"):], "nb_drones")
+        if raw_lines[1][1][:len("start_hub:")] != "start_hub:":
+            raise ValueError(f"Line {raw_lines[1][0]}: \
+Error of start_hub data input format")
         else:
-            metadata["start_hub"] = zone_maker(raw_lines[1].split(":")[1])
-        if raw_lines[2][:len("end_hub:")] != "end_hub:":
-            raise ValueError("Error of end_hub data input format")
+            try:
+                metadata["start_hub"] = zone_maker(
+                    raw_lines[1][1].split(":")[1])
+            except ValueError as err:
+                raise ValueError(f"Line {raw_lines[1][0]}: {err}") from err
+        if raw_lines[2][1][:len("end_hub:")] != "end_hub:":
+            raise ValueError(f"Line {raw_lines[2][0]}: \
+Error of end_hub data input format")
         else:
-            metadata["end_hub"] = zone_maker(raw_lines[2].split(":")[1])
+            try:
+                metadata["end_hub"] = zone_maker(raw_lines[2][1].split(":")[1])
+            except ValueError as err:
+                raise ValueError(f"Line {raw_lines[2][0]}: {err}") from err
         for i in raw_lines[3:]:
-            if i[:len("hub:")] == "hub:":
-                metadata["hub"].append(zone_maker(i[len("hub:"):]))
-            elif i[:len("connection:")] == "connection:":
-                metadata["connection"].append(
-                    connection_maker(i[len("connection:"):])
-                    )
+            if i[1][:len("hub:")] == "hub:":
+                try:
+                    metadata["hub"].append(zone_maker(i[1][len("hub:"):]))
+                except ValueError as err:
+                    raise ValueError(f"Line {i[0]}: {err}") from err
+            elif i[1][:len("connection:")] == "connection:":
+                try:
+                    metadata["connection"].append(
+                        connection_maker(i[1][len("connection:"):])
+                        )
+                except ValueError as err:
+                    raise ValueError(f"Line {i[0]}: {err}") from err
             else:
-                raise ValueError("Wrong data input format")
+                raise ValueError(f"Line {i[0]}: Wrong data input format")
+        validate_structure(metadata)
     except ValueError as error:
         print(error)
         metadata["error"] = 1
