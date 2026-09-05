@@ -1,22 +1,6 @@
-from dataclasses import dataclass
 from rich import print
-
-
-@dataclass
-class ZoneSpec:
-    name: str
-    x: int
-    y: int
-    zone_type: str = "normal"
-    color: str | None = None
-    max_drones: int = 1
-
-
-@dataclass
-class ConnSpec:
-    name1: str
-    name2: str
-    max_link_capacity: int = 1
+from src.model.models import ZoneSpec, ConnSpec, ParsedMap
+from src.model.graph import build_graph
 
 
 def parse_positive_int(raw: str, field_name: str) -> int:
@@ -73,6 +57,8 @@ def connection_maker(specs: str) -> ConnSpec:
     if len(specs.split()[0]) < 3 or len(specs.split()[0].split("-")) != 2:
         raise ValueError("Wrong connection data insertion format")
     names = specs.split()[0].split("-")
+    if names[0] == names[1]:
+        raise ValueError("Wrong connection data insertion same name")
     other = 1
     if len(specs.split()) == 2:
         if specs.split()[-1][0] != "[" or specs.split()[-1][-1] != "]":
@@ -89,15 +75,15 @@ def connection_maker(specs: str) -> ConnSpec:
     return obj
 
 
-def validate_structure(metadata: dict) -> None:
-    all_zones = [metadata["start_hub"], metadata["end_hub"], *metadata["hub"]]
+def validate_structure(metadata: ParsedMap) -> None:
+    all_zones = [metadata.start_hub, metadata.end_hub, *metadata.hub]
     names = [z.name for z in all_zones]
     if len(names) != len(set(names)):
         raise ValueError("Duplicate zone name detected")
 
     zone_names = set(names)
     seen_edges: set[frozenset[str]] = set()
-    for conn in metadata["connection"]:
+    for conn in metadata.connection:
         if conn.name1 not in zone_names or conn.name2 not in zone_names:
             raise ValueError(f"Connection references unknown zone:\
  {conn.name1}-{conn.name2}")
@@ -108,16 +94,9 @@ def validate_structure(metadata: dict) -> None:
         seen_edges.add(edge)
 
 
-def parse_metadata(raw: str) -> dict[str, str]:
+def parse_metadata(raw: str) -> ParsedMap:
     """Parses '[zone=priority color=green max_drones=2]' -> dict."""
-    metadata = {
-        "nb_drones": 0,
-        "start_hub": 0,
-        "end_hub": 0,
-        "hub": [],
-        "connection": [],
-        "error": 0
-    }
+    metadata = ParsedMap()
     raw_lines = raw.splitlines()
     raw_lines = [
         (i, raw_lines[i - 1]) for i in range(1, len(raw_lines) + 1)
@@ -134,14 +113,14 @@ def parse_metadata(raw: str) -> dict[str, str]:
             raise ValueError(f"Line {raw_lines[0][0]}: \
 Error of nb_drones data input format")
         else:
-            metadata["nb_drones"] = parse_positive_int(
+            metadata.nb_drones = parse_positive_int(
                 raw_lines[0][1][len("nb_drones:"):], "nb_drones")
         if raw_lines[1][1][:len("start_hub:")] != "start_hub:":
             raise ValueError(f"Line {raw_lines[1][0]}: \
 Error of start_hub data input format")
         else:
             try:
-                metadata["start_hub"] = zone_maker(
+                metadata.start_hub = zone_maker(
                     raw_lines[1][1].split(":")[1])
             except ValueError as err:
                 raise ValueError(f"Line {raw_lines[1][0]}: {err}") from err
@@ -150,18 +129,18 @@ Error of start_hub data input format")
 Error of end_hub data input format")
         else:
             try:
-                metadata["end_hub"] = zone_maker(raw_lines[2][1].split(":")[1])
+                metadata.end_hub = zone_maker(raw_lines[2][1].split(":")[1])
             except ValueError as err:
                 raise ValueError(f"Line {raw_lines[2][0]}: {err}") from err
         for i in raw_lines[3:]:
             if i[1][:len("hub:")] == "hub:":
                 try:
-                    metadata["hub"].append(zone_maker(i[1][len("hub:"):]))
+                    metadata.hub.append(zone_maker(i[1][len("hub:"):]))
                 except ValueError as err:
                     raise ValueError(f"Line {i[0]}: {err}") from err
             elif i[1][:len("connection:")] == "connection:":
                 try:
-                    metadata["connection"].append(
+                    metadata.connection.append(
                         connection_maker(i[1][len("connection:"):])
                         )
                 except ValueError as err:
@@ -171,11 +150,11 @@ Error of end_hub data input format")
         validate_structure(metadata)
     except ValueError as error:
         print(error)
-        metadata["error"] = 1
+        metadata.error = 1
     return metadata
 
 
-print(parse_metadata('''nb_drones: 5
+aaa = parse_metadata('''nb_drones: 5
 start_hub: hub 0 0 [color=green]
 end_hub: goal 10 10 [color=yellow]
 hub: roof1 3 4 [zone=restricted color=red]
@@ -189,4 +168,6 @@ connection: roof1-roof2
 connection: roof2-goal
 connection: corridorA-tunnelB [max_link_capacity=2]
 connection: tunnelB-goal
-'''))
+''')
+
+print(build_graph(aaa).zones, build_graph(aaa).connections)
