@@ -54,9 +54,10 @@ class Connection:
 
     def other(self, zone: Zone) -> Zone:
         return self.zone_b if zone is self.zone_a else self.zone_a
-    
+
     def __repr__(self) -> str:
-        return f"Connection({self.zone_a.name}-{self.zone_b.name}, cap={self.max_link_capacity})"
+        return f"Connection({self.zone_a.name}-{self.zone_b.name}, \
+cap={self.max_link_capacity})"
 
 
 class Graph:
@@ -70,7 +71,9 @@ class Graph:
         return zone
 
     def add_connection(self, spec: ConnSpec) -> Connection:
-        conn = Connection(self.zones[spec.name1], self.zones[spec.name2], spec.max_link_capacity)
+        conn = Connection(self.zones[spec.name1],
+                          self.zones[spec.name2],
+                          spec.max_link_capacity)
         self.connections.append(conn)
         conn.zone_a.connections.append(conn)
         conn.zone_b.connections.append(conn)

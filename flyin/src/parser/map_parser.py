@@ -170,4 +170,8 @@ connection: corridorA-tunnelB [max_link_capacity=2]
 connection: tunnelB-goal
 ''')
 
-print(build_graph(aaa).zones, build_graph(aaa).connections)
+test = build_graph(aaa)
+
+print(test.zones["hub"].connections[0].other(test.zones["hub"]))
+
+# print(build_graph(aaa).zones, build_graph(aaa).connections)
