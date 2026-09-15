@@ -31,7 +31,7 @@ def shortest_path(start: Zone, end: Zone, graph: Graph) -> list[Zone] | None:
             continue
         if current_name == end.name:
             break
-            current_zone = graph.zones[current_name]
+        current_zone = graph.zones[current_name]
         for conn in current_zone.connections:
             neighbor = conn.other(current_zone)
             '''
@@ -39,8 +39,23 @@ def shortest_path(start: Zone, end: Zone, graph: Graph) -> list[Zone] | None:
             compare against distances[neighbor.name], 
             and if better, update both dicts and push to the queue.
             '''
-        
-        #Add the reconstraction path algorithm
-        #Just going backward the came_from[end.name]
-        #untill u reach the end.start fill up all in a list and return it
-
+            if neighbor.zone_type == "blocked":
+                continue
+            dist = current_dist + move_cost(neighbor)
+            if dist < distances[neighbor.name]:
+                distances[neighbor.name] = dist
+                came_from[neighbor.name] = current_name
+                heapq.heappush(queue, (dist, neighbor.name))
+    if distances[end.name] == float("inf"):
+        return None
+    #Add the reconstraction path algorithm
+    #Just going backward the came_from[end.name]
+    #untill u reach the end.start fill up all in a list and return it
+    path = []
+    curr = end.name
+    while curr != start.name:
+        path.append(curr)
+        curr = came_from[curr]
+    path.append(start.name)
+    path = path[::-1]
+    return [graph.zones[name] for name in path]
