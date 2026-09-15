@@ -1,6 +1,6 @@
 from rich import print
 from src.model.models import ZoneSpec, ConnSpec, ParsedMap
-from src.model.graph import build_graph
+from src.model.graph import build_graph, shortest_path
 
 
 def parse_positive_int(raw: str, field_name: str) -> int:
@@ -172,6 +172,6 @@ connection: tunnelB-goal
 
 test = build_graph(aaa)
 
-print(test.zones["hub"].connections[0].other(test.zones["hub"]))
-
+# print(test.zones["hub"].connections[0].other(test.zones["hub"]))
+print(shortest_path(test.start, test.end, test))
 # print(build_graph(aaa).zones, build_graph(aaa).connections)

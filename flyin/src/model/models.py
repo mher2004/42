@@ -63,6 +63,8 @@ cap={self.max_link_capacity})"
 class Graph:
     def __init__(self) -> None:
         self.zones: dict[str, Zone] = {}
+        self.start: Zone
+        self.end: Zone
         self.connections: list[Connection] = []
 
     def add_zone(self, spec: ZoneSpec) -> Zone:

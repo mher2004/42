@@ -5,6 +5,8 @@ import heapq
 def build_graph(parsed: ParsedMap) -> Graph:
     assert parsed.start_hub is not None and parsed.end_hub is not None
     graph = Graph()
+    graph.start = parsed.start_hub
+    graph.end = parsed.end_hub
     for spec in [parsed.start_hub, parsed.end_hub, *parsed.hub]:
         graph.add_zone(spec)
     for spec in parsed.connection:
@@ -34,11 +36,6 @@ def shortest_path(start: Zone, end: Zone, graph: Graph) -> list[Zone] | None:
         current_zone = graph.zones[current_name]
         for conn in current_zone.connections:
             neighbor = conn.other(current_zone)
-            '''
-            compute current_dist + move_cost(neighbor), 
-            compare against distances[neighbor.name], 
-            and if better, update both dicts and push to the queue.
-            '''
             if neighbor.zone_type == "blocked":
                 continue
             dist = current_dist + move_cost(neighbor)
@@ -48,9 +45,6 @@ def shortest_path(start: Zone, end: Zone, graph: Graph) -> list[Zone] | None:
                 heapq.heappush(queue, (dist, neighbor.name))
     if distances[end.name] == float("inf"):
         return None
-    #Add the reconstraction path algorithm
-    #Just going backward the came_from[end.name]
-    #untill u reach the end.start fill up all in a list and return it
     path = []
     curr = end.name
     while curr != start.name:
