@@ -172,6 +172,7 @@ connection: tunnelB-goal
 
 test = build_graph(aaa)
 
+print(test.zones, test.start, test.end)
 # print(test.zones["hub"].connections[0].other(test.zones["hub"]))
 print(shortest_path(test.start, test.end, test))
 # print(build_graph(aaa).zones, build_graph(aaa).connections)
