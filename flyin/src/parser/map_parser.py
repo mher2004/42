@@ -1,6 +1,4 @@
-from rich import print
 from src.model.models import ZoneSpec, ConnSpec, ParsedMap
-from src.model.graph import build_graph, shortest_path
 
 
 def parse_positive_int(raw: str, field_name: str) -> int:
@@ -152,27 +150,3 @@ Error of end_hub data input format")
         print(error)
         metadata.error = 1
     return metadata
-
-
-aaa = parse_metadata('''nb_drones: 5
-start_hub: hub 0 0 [color=green]
-end_hub: goal 10 10 [color=yellow]
-hub: roof1 3 4 [zone=restricted color=red]
-hub: roof2 6 2 [zone=normal color=blue]
-hub: corridorA 4 3 [zone=priority color=green max_drones=2]
-hub: tunnelB 7 4 [zone=normal color=red]
-hub: obstacleX 5 5 [zone=blocked color=gray]
-connection: hub-roof1
-connection: hub-corridorA
-connection: roof1-roof2
-connection: roof2-goal
-connection: corridorA-tunnelB [max_link_capacity=2]
-connection: tunnelB-goal
-''')
-
-test = build_graph(aaa)
-
-print(test.zones, test.start, test.end)
-# print(test.zones["hub"].connections[0].other(test.zones["hub"]))
-print(shortest_path(test.start, test.end, test))
-# print(build_graph(aaa).zones, build_graph(aaa).connections)
