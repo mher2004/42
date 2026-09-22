@@ -1,11 +1,17 @@
 PY = python3
-MAIN = a_maze_ing.py
+MAIN = main.py
 
 run:
-	$(PY) $(MAIN) config.txt
+	$(PY) $(MAIN)
 
 install:
 	pip install -r requirements.txt
+
+env:
+	python3 -m venv venv
+
+#activate:
+#	source venv/bin/activate
 
 lint:
 	flake8 .
